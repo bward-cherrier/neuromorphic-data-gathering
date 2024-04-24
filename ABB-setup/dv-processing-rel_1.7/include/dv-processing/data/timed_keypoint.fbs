@@ -1,0 +1,32 @@
+native_include "cvector.hpp";
+
+include "geometry_types.fbs";
+
+file_identifier "TKPS";
+
+namespace dv;
+
+table TimedKeyPoint {
+    /// coordinates of the keypoints.
+    pt: Point2f (native_inline);
+    /// diameter of the meaningful keypoint neighborhood.
+    size: float;
+    /// computed orientation of the keypoint (-1 if not applicable);
+    /// it's in [0,360) degrees and measured relative to
+    /// image coordinate system, ie in clockwise.
+    angle: float;
+    /// the response by which the most strong keypoints have been selected. Can be used for the further sorting or subsampling.
+    response: float;
+    /// octave (pyramid layer) from which the keypoint has been extracted.
+    octave: int;
+    /// object class (if the keypoints need to be clustered by an object they belong to).
+    class_id: int;
+    /// Timestamp (µs).
+    timestamp: int64;
+}
+
+table TimedKeyPointPacket {
+	elements: [TimedKeyPoint] (native_inline);
+}
+
+root_type TimedKeyPointPacket;

@@ -1,0 +1,32 @@
+FUNCTION(DV_ADD_TEST name)
+	SET(LIBS "")
+
+	IF(${ARGC} GREATER 1)
+		MATH(EXPR lastIndex "${ARGC}-1")
+		FOREACH(index RANGE 1 ${lastIndex})
+			SET(LIBS ${LIBS} ${ARGV${index}})
+		ENDFOREACH()
+	ENDIF()
+
+	ADD_EXECUTABLE(test-${name} ${name}.cpp)
+	ADD_TEST(NAME ${name} COMMAND test-${name})
+
+	TARGET_LINK_LIBRARIES(test-${name} PRIVATE dv::processing boost-ut ${LIBS})
+
+	TARGET_COMPILE_OPTIONS(test-${name} PRIVATE "-Werror=deprecated-declarations")
+ENDFUNCTION()
+
+ADD_SUBDIRECTORY(camera)
+ADD_SUBDIRECTORY(cluster)
+ADD_SUBDIRECTORY(containers)
+ADD_SUBDIRECTORY(core)
+ADD_SUBDIRECTORY(data)
+ADD_SUBDIRECTORY(depth)
+ADD_SUBDIRECTORY(features)
+ADD_SUBDIRECTORY(imgproc)
+ADD_SUBDIRECTORY(kinematics)
+ADD_SUBDIRECTORY(optimization)
+ADD_SUBDIRECTORY(imu)
+ADD_SUBDIRECTORY(io)
+ADD_SUBDIRECTORY(visualization)
+ADD_SUBDIRECTORY(noise)

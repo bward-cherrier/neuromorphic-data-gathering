@@ -1,0 +1,370 @@
+Release 1.7.9 - 20.07.2023
+
+BUG FIXES
+- CMake: fix VCPKG tools compilation on MSVC.
+- Python: improve pip installation scripts.
+- CameraCapture: do not return empty trigger packets to user.
+- CameraCapture: do not generate timestamp reset twice on startup.
+- CameraCapture: better DVX Mini synchronization to system time.
+- CalibrationSet: fix writeToFile() function const-ness.
+- RedetectionStrategy: fix deprecated decideRedection() function return.
+- i686: fix alignment checks for 32bit architectures.
+- eDVS: fix support for eDVS4337 device.
+- StereoGeometry: fix bug with rectified image size when handling cameras
+  of different resolutions.
+- MeanShiftTracker: fix bug with track updates' timestamp.
+- EventStore: do not accept null EventPackets on construction.
+- StreamSlicer: fix unbounded growth of non-EventStore stream slicers when
+  using slice-by-time mode.
+- Submodules: update all external git submodule dependencies.
+- Python: add missing methods get/setNeutralPotential() to EdgeMapAccumulator.
+- CameraCalibration: fix getTransformMatrix() row-major ordering.
+- StereoGeometry: fix computation of right to left transformation from existing
+  camera calibration.
+- StereoGeometry: fix toDepthFrame() using incorrect signed integers.
+- MultiStreamSlicer: fix time slicing of multiple streams and deletion of
+  delivered data after usage.
+- Python: add missing method getPotentialSurface() to Accumulator.
+
+
+Release 1.7.8 - 02.02.2023
+
+BUG FIXES
+- Mean-Shift Tracker: new tracks not always added after redetection.
+- Mean-Shift Tracker: use lowest timestamp to be in line with other trackers.
+- Redetection Strategy: fixed naming of parameters.
+
+
+Release 1.7.7 - 20.01.2023
+
+BUG FIXES
+- CameraCapture: fix DVXplorer Mini support.
+- StereoCapture: improve time synchronization behavior.
+
+
+Release 1.7.6 - 13.01.2023
+
+BUG FIXES
+- CameraCapture: fix timestamp resets not being correctly processed on
+  camera start, if multiple were present or other data was present.
+
+
+Release 1.7.5 - 09.01.2023
+
+BUG FIXES
+- CameraCapture: fix timestamp reset not available in DVX Mini.
+
+
+Release 1.7.4 - 21.12.2022
+
+BUG FIXES
+- NetworkReader: throw exception if no streams found, don't crash.
+
+
+Release 1.7.3 - 20.12.2022
+
+BUG FIXES
+- fmt::format: fix compatibility with fmt library version 8.
+
+
+Release 1.7.2 - 19.12.2022
+
+BUG FIXES
+- CMake: fix targets include, fix Python discovery.
+
+
+Release 1.7.1 - 16.12.2022
+
+BUG FIXES
+- CMake Tests: fix boost-ut integration, issues with Ubuntu packages and CMake CPM fixed.
+
+
+Release 1.7.0 - 15.12.2022
+
+NEW FEATURES
+- dv::io::NetworkReader class for reading data from TCP / UNIX socket servers.
+- dv::io::NetworkWriter class for writing data as TCP / UNIX socket servers.
+- New utility `dv-tcpstat` to get information about an existing network stream.
+- Introduce generic `dv::StreamSlicer` that supports any type of stream for slicing.
+- Introduce `dv::MultiStreamSlicer` which performs synchronous slicing on multiple streams.
+- `dv::CameraCapture` now provides methods to read seek timestamps of available data streams.
+- New event-based blob detector.
+- New event-based feature tracker using mean shift algorithm with optimal mode search on time surface.
+- Redetection Strategy: added new strategies UpdateIntervalRedetection and UpdateIntervalOrFeatureCountRedetection.
+- EventStore: added sliceRate() method to slice an EventStore to keep a specific event-rate.
+- Data Packets: added ostream printers for all data packets.
+- Camera Capture: added control functions getDavisExposureDuration(), setDVXplorerGlobalReset() and
+  setDVXplorerEFPS().
+- Event Visualizer: added generateImage() method to draw events on a given background image.
+- core/time.hpp: concentrated time-related definitions and functions in one header file.
+
+BUG FIXES
+- Some performance improvements in `dv::CameraCapture` and `dv::MonoCameraRecording` by avoiding some memory copies.
+- Camera calibration: fixed ostream printer, wrong transformation matrix was printed.
+- Python: fixed CameraCapture.enableDavisAutoExposure() calling wrong C++ function.
+- TimeSurface: fix type checks in getOCVMat() and getOCVMatScaled().
+- Features: fixed typo redection -> redetection in several function names.
+- Camera Capture: disabled global hold setting for DVXplorer, not useful for most users and inconsistent with
+  other libraries published.
+- CMake: cleanup, better submodule support.
+- dv-imu-bias-estimation utility: fix crash if no camera name provided.
+
+
+Release 1.6.0 - 18.10.2022
+
+NEW FEATURES
+- New documentation available, with multiple examples in C++ and Python.
+- Optimized event filtering , reduced execution time for all event filters, speed-up up to 150%.
+- dv::io::ReadOnlyFile: more robust detection of corrupted/incomplete files.
+- VCPKG: dv-processing is now available in the VCPKG repository. Manual build is possible via
+  the BUILD_CONFIG_VCPKG CMake flag.
+- `dv::PixelAccumulator` (now deprecated) is renamed into `dv::EdgeMapAccumulator` for better naming.
+- `cv::features::FeatureDetector` now uses `cv::GFTTDetector` as default feature detector.
+- Added getter for last keypoints inside FeatureTracks class and accept for batch of keypoints.
+
+BUG FIXES
+- `dv::EventStore::sliceBack()` is now correctly marked as const method.
+- camera capture: returned dv::Frame timestamp was incorrectly set, now correctly represents the start of exposure.
+- dv::io::ReadOnlyFile: when reading an empty file, an exception was incorrectly thrown.
+  Now, the empty file will correctly be opened and returned with no content.
+- Python: added missing isEventStreamAvailable(), isImuStreamAvailable() and isTriggerStreamAvailable()
+  functions for CameraCapture.
+- StereoCameraRecording: fix inconsistent usage of std::string instead of fs::path in constructor.
+- CMake: fixed detection of LZ4 and ZSTD libraries in multiple environments.
+- CMake: fixed detection of custom boost in cross-compile environments.
+- CMake: fixed compiler check.
+- Fixing feature redetection bug that returns invalid features when no additional feature are found.
+- Explicit timestamp reset signal is now sent in the `dv::io::CameraCapture` class constructor.
+- FeatureTracks: fixed bug in clear method. Missing reset "mHighestTime".
+- Fixed a bug in FeatureTracks which causes out-of-order exception after calling clear() method.
+
+
+Release 1.5.0 - 18.07.2022
+
+NEW FEATURES
+- Introducing `dv::SparseEventBlockMatcher`, a class which efficiently performs stereo depth matching on sparse
+  set of coordinates among two calibrated stereo streams. It estimates disparity between two event streams by sparsely
+  accumulating only the regions of interest to reduce computational complexity.
+- New implementation of Contrast Maximization, see documentation at docs/source/contrast_maximization.md.
+- StereoGeometry: introducing `unmapPoint` method which transforms coordinates from undistorted rectified pixel space
+  into original camera pixel space.
+- Samsung EVK is now supported in `dv::io::CameraCapture`
+- `dv::io::CameraCapture` introduces new methods to get and set timestamp offset.
+- Introducing `dv::io::CameraInputBase`: an interface class to abstract live camera and AEDAT4 recordings with
+  a common interface.
+- Python: NumPy accessors for data.
+- Python: support for pip install via setup.py, see docs/python-installation/ubuntu.md.
+
+BUG FIXES
+- FilterChain: ignore empty packets during time monotonicity check.
+- CameraGeometry: fixed a bug which caused incorrect `distort` method results with RadTan model containing 4 parameters.
+- StereoEventStreamSlicer: fixed failed synchronization in case when right camera data is forward in time with fixed
+  offset. Accept now supports optionals also, making it easier to use directly with camera input.
+- MeanShift clustering: making low level functions available, so users can access intermediate results from clustering.
+- CalibrationSet: fixing a crash while parsing V1 format invalid XML calibration files, throws an exception instead.
+- Adding convenience methods to access timestamps, coordinates, and polarities as Eigen (C++)/NumPy (Python) arrays.
+- Adding missing packet data types for more convenient IO operations in python.
+- Adding samples of reading / writing live cameras.
+- `dv::PixelAccumulator` now return `-1` timestamp when no events were passed into accept.
+- `dv::Accumulator` generates identical output when called `generateFrame` without passing data.
+- CameraGeometry: `undistort` method returned incorrect result if used with floating point coordinates.
+- CameraGeometry: minor performance improvements.
+- PixelAccumulator: decay is now applied before accumulation, decay values are now interpreted within [0.0; 1.0] to
+  simplify the approach.
+- `dv.io.discoverDevices()` is added to Python bindings.
+- Adding missing constructor for `dv.io.MonoCameraWriter.Config` class.
+- Adding `dv.io.StereoCameraRecording` in Python bindings.
+
+
+Release 1.4.0 - 23.05.2022
+
+INCOMPATIBLE CHANGES
+- `dv::Accumulator` now generates 8-bit integer images instead of floating point, which is easier to
+  use and is more consistent with other classes generating images.
+- Data type `dv::Point2f` used in `dv::TimedKeyPoint` has been changed to a Flatbuffer struct instead
+  of a table for performance and consistency reasons. This will not allow previous `dv::TimedKeyPointPackets`
+  to load properly from storage. At this point we do not believe such files to exist and this change will
+  have no to minimal impact to users.
+- Converted several simple enums to enum classes in all headers for better code quality, this will require
+  users to use the fully qualified class name, eg. dv::Accumulator::Decay::EXPONENTIAL.
+
+NEW FEATURES
+- Native Windows (MSVC) support
+- Calibration: improved support for DV-SDK XML files, also supports oldest file format now.
+- CameraCalibration: added getCameraMatrix() method to get a standard OpenCV 3x3 camera matrix.
+- Concepts: new Enum concept, consistent naming for concepts, header includes cleanup.
+- utils.hpp: introduce and use TimestampClock and TimestampResolution.
+- Adding a method for device discovery.
+- Adding `dv::camera::StereoGeometry` class that handles rectification of stereo data streams (events and images) and
+  depth estimation.
+- Adding `dv::SemiDenseStereoMatcher` class that calculates disparity on stereo synchronized event streams or images
+  by applying accumulation into frames and disparity using a stereo block matching algorithm.
+- New landmark type is added with an ability to be visualized in `PoseVisualizer` class.
+- `dv::io::CameraCapture` introduces getPixelPitch method that can be used to lookup the pixel pitch distance.
+- `dv::io::CameraCapture` adds frame interval setting and exposes low level config setting functions.
+- Fully support Equidistant (fish-eye) lens calibration model for undistortion.
+
+BUG FIXES
+- Fixed a bug in `dv::Accumulator` which caused timestamps to be incorrectly generated when
+  generating multiple frames.
+- CalibrationSet: const-ify several functions that do not modify the content.
+- Removing unnecessary asserts in `CameraGeometry::backProject` method when sub-pixel
+  implementation is used.
+- CMake: improved handling of custom Boost version, will now always use custom version on
+  systems that require it (Ubuntu LTS 18.04 Bionic and 20.04 Focal).
+- Dependencies increased to CMake 3.16, Eigen 3.3.9, fmt 7.1.3.
+- Stereo transformToC0 was loaded incorrectly, fixing the correct order of transformation matrix values.
+- `dv::EventStore` added missing assignment operator for dv::EventPacket as in constructor.
+- `dv::visualization::colors::someNeonColor` method is now inline to fix compilation errors.
+- `dv::io::MonoCameraWriter` was not saving resolution metadata correctly.
+- Fixing a bug in `dv::features::EventFeatureLKTracker` to maintain a minimum amount of events to prevent
+  wrong behaviour when event stream contains very little amount of events.
+- CMake project now validates compiler version to be compatible with the project.
+- Adding a few missing methods in python bindings: `dv::now()`, `dv::toTimePoint()`, and `modifyTimeInterval` in
+  `EventStreamSlicer` that accepts a `timedelta` variable type.
+- dv::io::SimpleFile: fixed possible race condition on creation of writeable files.
+- dv::(Pixel)Accumulator: consistent checking if events are within size bounds; DEBUG mode will check all events
+  with resulting drop in performance. Release builds will not check bounds at all for maximum performance.
+- Use dv::runtime_assert() instead of assert() in most places for more consistent error reporting.
+- `dv::io::MonoCameraRecording` bugfix that caused runtime errors when built with MSVC.
+- `dv::StereoEventStreamSlicer` is now guaranteed to execute the callbacks only when both streams supply enough
+  data.
+- Changed `dv::Accumulator` constructor to provide more reasonable default parameters.
+- Transformation.hpp: fix delta() function to get relative transformation.
+- `CameraCalibration` and `IMUCalibration` now validate transformation matrices to be strictly homogeneous.
+
+
+Release 1.3.0 - 14.03.2022
+
+NEW FEATURES
+- `dv::io::CameraCapture` implements a method to inspect IMU measurement rate `getImuRate()`.
+- `dv::io::MonoCameraRecording` and `dv::io::MonoCameraWriter` now supports templated methods for writing
+  any flatbuffer type that is supported in dv-processing.
+- `dv::EventStore::rate` function that calculates the event rate in events per second for the given store.
+- `dv::features::EventCombinedLKTracker` robustness improvements when events are just noise, important
+  for cases when tracking is performed on a stationary camera.
+- `dv::features::FeatureTracks` adds an optional track timeout feature for quick drop of lost tracks.
+- Added a forward-backward error based track rejection feature to the available feature trackers.
+- Adding API to set constant scene depth in Lucas-Kanade trackers and motion compensator.
+- Documentation for Motion Compensation usage added.
+- New 3D visualization sample using libpcl.
+- Updated input validation rules of `dv::io::MonoCameraRecording`, empty input data is ignored rather than failing.
+- Fixing issues with MSVC compiler, includes changes to code and project configuration.
+
+BUG FIXES
+- Fixed a potential crash when no event data is passed into `EventCombinedLKTracker` while tracking only frames.
+- Fixing a bug which caused failed assertions while using `write*Packet` methods in `dv::io::MonoCameraWriter`.
+- Python bindings: `dv.EventStore` adds a `push_back` method supporting `dv.Event` type.
+- Python bindings: `dv.camera.CameraGeometry` add sub-pixel accuracy implementation support in methods `backProject`
+  and `backProjectSequence`.
+- libfmt: fixed compatibility with new libfmt 8.1.
+
+
+Release 1.2.0 - 04.02.2022
+
+NEW FEATURES
+- Noise filter benchmarks: add benchmarks for polarity and ROI filters.
+- Camera capture: added isConnected() method to check if camera is still alive.
+- Camera capture sample: simplified signal handling, added ESC key support to
+  close window, correctly concatenate events with color frame.
+- StereoCapture class for handling time-synchronized pairs of cameras.
+- StereoEventStreamSlicer class for synchronized slicing of stereo camera event streams.
+- `CalibrationSet` class supporting read / write of various calibrations (intrinsics,
+  stereo extrinsics, IMU extrinsics and noise parameters).
+- `dv::EventMaskFilter` class that filters event stores based on a mask.
+
+BUG FIXES
+- Fixing a typo in accumulation benchmarks.
+- Fixing a use of a deprecated `add(dv::Event)` function in camera_geometry.hpp.
+- `PartialEventData`: Fixing the merging of partials when partial is pointing to incomplete data.
+- `FeatureDetector`: when the feature detector uses `FeaturePostProcessing::None`, the output is not
+  sorted and returns the requested number of features instead of returning all features.
+- `CameraCapture` implementations of `readNext` and `handleNext` were incorrect and did not return
+  packets; the functions now return packets in the order of arrival on the USB interface.
+- Fixing python binding stub generation warning of unknown `dv::io::DataReadHandler::OutputFlag` symbol.
+- Bumping minimum CMake version requirement to 3.14 to fix OPTION() behavior and NumPy for Python bindings.
+- Updated CMake search function to look for Boost in `/opt/inivation/boost` if no compatible version is found.
+- ReadOnlyFile: fix read(tsRange) function returning one less packet in some circumstances.
+- MonoCameraRecording: fix returning of extra data outside of given range when reading a timestamp range.
+- dv::Accumulator: `setNeutralPotential` now resets the cached potential surface to the new neutral potential.
+- Python samples: fixing a bug in filter_chain.py sample where incorrect type caused an unhandled exception.
+- `dv::PixelAccumulator`: fixing a bug that causes incorrect decay in cases when `decay` is larger than `contribution`.
+- Added updated python bindings for new features available in `dv::PixelAccumulator`.
+- Additional python constructor for `dv::kinematics::MotionCompensator` accepting preconfigured accumulator.
+- `dv::visualization::EventVisualizer` is now available in python bindings.
+- cv::Scalars type-caster for python using incorrect types while casting.
+- `dv::EventStore`: fixing memory access issue in sliceTime can produce invalid return indices (retStart, retEnd) if
+  requested slice period is outside of valid range.
+
+
+Release 1.1.0 - 10.01.2022
+
+NEW FEATURES
+- Python bindings: new Python bindings for most functionality, replaces dv-python.
+  Several samples available in python/samples/, tests in python/tests/.
+- CameraCapture class: basic camera access via libcaer.
+- MonoCameraWriter class: high-level writer class for AEDAT4 files supporting event,
+  frame, imu, and trigger types.
+- IMU Rotation-Integrator: motion compensation via IMU rotation integration.
+- Motion Compensator: new APIs generateEvents() and generateEventsAt(timestamp).
+- EventStore: configurable sharding size, default of 10000 for modifiable shards.
+- EventSlicer: new API doEveryTimeInterval() with std::chrono support.
+- EventFilter: new event filtering classes, with chaining via EventFilterChain.
+  Provided event filters: EventRegionFilter (ROI), EventPolarityFilter,
+  RefractoryPeriodFilter, BackgroundActivityNoiseFilter, FastDecayNoiseFilter.
+- EventVisualizer: simple event visualizer.
+- PixelAccumulator: support for using polarity for contribution calculation,
+  neutral value for surface and synchronous decay.
+- KeyPointResampler (API BREAK): refactored to not need a template parameter anymore,
+  the resample() method is now templated and will detect the input type automatically.
+- IMU: new APIs getAccelerations() and getAngularVelocities() to get acceleration in
+  m/s^2 and velocities in rad/s.
+- Utils (API BREAK): dv::DEBUG_ENABLED boolean to control debug code, dv_runtime_assert()
+  now always evaluated and namespaced as dv::runtime_assert().
+- dv::cstring, dv::cvector: improved constructor, assignment and append operations
+  to support any objects providing data() and size() functions (std::string, std::span,
+  std::string_view, std::array, ...).
+- dv::cstring, dv::cvector: improved memory reallocation behavior by changing growth factor
+  from 2 to 1.5, rationale https://github.com/facebook/folly/blob/main/folly/docs/FBVector.md.
+- Exceptions: converted to use C++20 concepts.
+- Concepts: compatibility layer for std::concept library on MacOS and older LLVM/Clang.
+- Concepts: new concepts EventFilter, return_invocable_strong/weak.
+- Benchmarks: new benchmarks for event-store and noise filtering.
+- Samples: new noise filtering, motion compensation and camera capture samples.
+
+BUG FIXES
+- Concepts: fix Coordinate2D and 3D checks for Eigen vectors
+- Concepts: fix return type check for EventOutputGenerator concept
+- EventStore: fix erase() corner cases, add test for them.
+- Feature Tracks: fix wrong keypoint coordinate
+- Mono Camera Recording: add getStream() and parseStreamResolution() functions to implement
+  missing getEventResolution() and getFrameResolution() APIs.
+- Mono Camera Recording: fix wrong stream ID in Trigger parser.
+
+
+Release 1.0.0 - 08.12.2021
+
+Initial release. Header-only C++ library for event-based vision.
+
+NEW FEATURES
+- Modern C++20 library using concepts and compile-time checks
+- Base DV data types (from dv-runtime): Event, Frame, IMU, Trigger, BoundingBox
+- New data types: DepthFrame, DepthEvent, Pose, TimedKeyPoint
+- dv::exceptions for more informative exceptions
+- IO: low-level AEDAT4 readers and writers, high level mono / stereo file readers
+- Basic algorithms: event store, event accumulators, ROI filter, polarity filter,
+  down-scale, bounding rectangle.
+- (Speed-Invariant) Time Surfaces
+- Arc* corner feature detector
+- Lucas-Kanade feature trackers for events, frames and both combined
+- Kinematics library: linear pose interpolation of rigid body motion transformations,
+  pixel coordinate prediction based on motion and 3D reprojection of points
+- Motion compensation algorithm that uses pixel reprojection to generate motion
+  compensated frames from events
+- KD-tree for knn search within event coordinates
+- Mean-Shift clustering using KD-tree
+- Similarity metrics for patches of visual data
+- Camera geometry and distortion model, supporting pixel (un)distortion and projection
+  (pinhole camera model with radial-tangential distortion only)
+- Camera pose visualization
+- Extensive tests and benchmarks

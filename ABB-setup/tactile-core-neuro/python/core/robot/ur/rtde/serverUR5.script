@@ -1,0 +1,89 @@
+    set_tcp(p[0.0,0.0,0.1105,0.0,0.0,0.0])
+    set_payload(0.27, [0.0, 0.0, 0.09])
+    set_gravity([0.0, 0.0, 9.82])
+
+    rtde_set_watchdog("input_int_register_0", 0.001, "PAUSE")
+    global q= get_actual_tcp_pose()
+    write_output_integer_register(0,0)
+    global speedTCP = 0.03
+    global speedJoints = 0.05
+    global op_code = 0
+    movel([1.2927662733996899, -1.8118695446264619, 1.8709870416738177, -1.6295489610511362, -1.5591304626275218, -0.27512099977744064], a=0.07, v=speedTCP)
+
+    thread Thread_1():
+    while (True):
+      global q= get_actual_tcp_pose() 
+      while (True):
+        write_output_integer_register(0,0)
+      	global op_code = read_input_integer_register(1)
+        global temp= p[0,0,0,0,0,0]
+
+        global x=read_input_float_register(0)
+        global y=read_input_float_register(1)
+        global z=read_input_float_register(2)
+        global roll=read_input_float_register(3)
+        global pitch=read_input_float_register(4)
+        global yaw=read_input_float_register(5)
+        global rpy=[roll,pitch,yaw]
+        global k=rpy2rotvec(rpy)
+        temp=p[x,y,z,k[0],k[1],k[2]]
+        if(temp != p[0,0,0,0,0,0]):
+          global q = temp
+        end
+
+        global j1=read_input_float_register(6)
+        global j2=read_input_float_register(7)
+        global j3=read_input_float_register(8)
+        global j4=read_input_float_register(9)
+        global j5=read_input_float_register(10)
+        global j6=read_input_float_register(11)
+        global joints = [j1,j2,j3,j4,j5,j6] 
+
+        global speedTCPRead = read_input_float_register(12)
+        global speedJointsRead = read_input_float_register(13)
+        sync()
+      end
+      sync()
+    end
+    sync()
+  end
+   
+
+  threadId_Thread_1 = run Thread_1()
+  while (True):
+  	if op_code == 0:
+      sync()
+      continue
+
+    elif op_code == 1:
+      write_output_integer_register(0,0)
+      movel(q, a=0.7, v=speedTCP)
+      write_output_integer_register(0,1)
+      sync()
+
+    elif op_code == 2:
+      write_output_integer_register(0,0)
+      movej(joints, a=0.2, v=speedJoints)
+      write_output_integer_register(0,1)
+      sync()
+
+    elif op_code == 3:
+      write_output_integer_register(0,0)
+      speedTCP = speedTCPRead
+      write_output_integer_register(0,1)
+      sync()
+
+    elif op_code == 4:
+      write_output_integer_register(0,0)
+      speedJoints = speedJointsRead
+      write_output_integer_register(0,1)
+      sync()
+
+    else:
+      popup("Invalid operation code")
+      sync()
+
+    end
+    sync()
+
+  end

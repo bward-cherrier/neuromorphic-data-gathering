@@ -1,0 +1,23 @@
+native_include "cstring.hpp";
+
+include "geometry_types.fbs";
+
+file_identifier "POSE";
+
+namespace dv;
+
+/// A struct holding timestamp and pose.
+table Pose {
+    /// Timestamp (µs).
+    timestamp: int64;
+    /// Translational vector.
+    translation: Vec3f (native_inline);
+    /// Rotation quaternion.
+    rotation: Quaternion (native_inline);
+    /// Name of the reference frame (transforming from)
+    referenceFrame: string;
+    /// Name of the target frame (transforming into)
+    targetFrame: string;
+}
+
+root_type Pose;

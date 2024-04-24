@@ -1,0 +1,12 @@
+prefix=@CMAKE_INSTALL_PREFIX@
+exec_prefix=${prefix}
+libdir=${prefix}/@CMAKE_INSTALL_LIBDIR@
+includedir=${prefix}/@CMAKE_INSTALL_INCLUDEDIR@
+
+Name: @PROJECT_NAME@
+Description: Generic algorithms for event cameras.
+Version: @PROJECT_VERSION@
+# Eigen, boost missing, no pc files available.
+Requires: opencv4 >= 4.2.0, fmt >= 8.1.1, liblz4, libzstd, openssl, libcaer >= 3.3.14
+Libs: @SYSTEM_THREAD_LIBS@
+Cflags: -I${includedir}

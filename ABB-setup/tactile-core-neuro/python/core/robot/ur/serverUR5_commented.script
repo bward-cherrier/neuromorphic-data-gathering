@@ -1,0 +1,174 @@
+# Input Registers:
+#     setp = double 0-5
+#     setj = double 6-11
+#     setTCPspeed = double 12
+#     setJspeed = double 13
+#     watchdog = int 0
+#     opcode = int 1
+#              0 = do nothing
+#              1 = move linear
+#              2 = move joints
+#              3 = set tcp speed
+#              4 = set joint speed
+
+# Output Registers
+#     int 0  = status (1=just finished doing something, 0=ready to do something)
+#     int 1  = initial status? (dont think this is actually used) (1=waiting for instruction, 0=doing something)
+
+# set params
+set_tcp(p[0.0,0.0,0.1105,0.0,0.0,0.0])
+set_payload(0.27, [0.0, 0.0, 0.09])
+set_gravity([0.0, 0.0, 9.82])
+
+# if no input update for 0.001Hz for reg 0 this will pause
+rtde_set_watchdog("input_int_register_0", 0.001, "PAUSE")
+
+# initialise tcp position variable
+global q = get_actual_tcp_pose()
+
+write_output_integer_register(0,0) # not sure if necessary (may just be initialising)
+write_output_integer_register(1,0) # let computer know arm is ready to do something
+
+# move to home position
+global speedTCP = 0.03
+global speedJoints = 0.05
+global op_code = 0
+movel([1.2927662733996899, -1.8118695446264619, 1.8709870416738177, -1.6295489610511362, -1.5591304626275218, -0.27512099977744064], a=0.07, v=speedTCP) # blocking
+
+write_output_integer_register(1,1)  # let computer know arm is done
+
+# wait for opcode to equal 0 (sent on start)
+initialise = read_input_integer_register(1)
+while initialise != 0:
+  initialise = read_input_integer_register(1)
+  sync()
+end
+
+# don't know why there's two loops...
+while (True):
+  global q = get_actual_tcp_pose()
+
+  while (True):
+    # let comp know arm is ready to do stuff as default for mainloop
+    write_output_integer_register(0,0)
+
+    # read what the comp wants the arm to do
+    global op_code = read_input_integer_register(1)
+
+    # skip to end of loop of opcode is 0 (do nothing)
+    if op_code == 0:
+      sync()
+      continue
+
+    # move linear requested by computer
+    elif op_code == 1:
+
+      # let comp know arm is ready to do stuff
+      write_output_integer_register(0,0)
+
+      global temp = p[0,0,0,0,0,0] # see below
+
+      # read and convert all values from movelinear registers
+      global x=read_input_float_register(0)
+      global y=read_input_float_register(1)
+      global z=read_input_float_register(2)
+      global roll=read_input_float_register(3)
+      global pitch=read_input_float_register(4)
+      global yaw=read_input_float_register(5)
+      global rpy=[roll,pitch,yaw]
+      global k=rpy2rotvec(rpy)
+
+      # not sure, maybe to make sure registers have been read correctly
+      temp=p[x,y,z,k[0],k[1],k[2]]
+      if(temp != p[0,0,0,0,0,0]):
+        global q = temp
+      end
+
+      # move linear
+      movel(q, a=0.7, v=speedTCP) # think this is blocking
+
+      # let comp know arm is done
+      write_output_integer_register(0,1)
+
+      # wait until comp knows arm is free and returns with opcode 0 (set in complete function)
+      while op_code != 0:
+        global op_code = read_input_integer_register(1)
+        sync()
+      end
+      sync()
+
+    elif op_code == 2:
+
+      # let comp know arm is ready to do stuff
+      write_output_integer_register(0,0)
+
+      # read all values from movejoint registers
+      global j1=read_input_float_register(6)
+      global j2=read_input_float_register(7)
+      global j3=read_input_float_register(8)
+      global j4=read_input_float_register(9)
+      global j5=read_input_float_register(10)
+      global j6=read_input_float_register(11)
+      global joints = [j1,j2,j3,j4,j5,j6]
+
+      # move joints
+      movej(joints, a=0.2, v=speedJoints)
+
+      # let comp know arm is done
+      write_output_integer_register(0,1)
+
+      # wait until comp knows arm is free and returns with opcode 0 (set in complete function)
+      while op_code != 0:
+        global op_code = read_input_integer_register(1)
+        sync()
+      end
+      sync()
+
+    elif op_code == 3:
+
+      # let comp know arm is ready to do stuff
+      write_output_integer_register(0,0)
+
+      # read all values from setTCPspeed registers and set global variable (used by move linear)
+      global speedTCP = read_input_float_register(12)
+
+      # let comp know arm is done
+      write_output_integer_register(0,1)
+
+      # wait until comp knows arm is free and returns with opcode 0 (set in complete function)
+      while op_code != 0:
+        global op_code = read_input_integer_register(1)
+        sync()
+      end
+      sync()
+
+    elif op_code == 4:
+
+      # let comp know arm is ready to do stuff
+      write_output_integer_register(0,0)
+
+      # read all values from setJointspeed registers and set global variable (used by move joints)
+      global speedJoints = read_input_float_register(13)
+
+      # let comp know arm is done
+      write_output_integer_register(0,1)
+
+      # wait until comp knows arm is free and returns with opcode 0 (set in complete function)
+      while op_code != 0:
+        global op_code = read_input_integer_register(1)
+        sync()
+      end
+      sync()
+
+    else:
+      popup("Invalid operation code")
+      sync()
+    end
+
+    # again let comp know arm is ready to do stuff
+    write_output_integer_register(0,0)
+    sync()
+
+  end
+  sync()
+end

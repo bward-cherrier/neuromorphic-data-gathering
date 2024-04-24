@@ -1,0 +1,17 @@
+DV_ADD_TEST(accumulator)
+DV_ADD_TEST(event-colors)
+DV_ADD_TEST(event-store)
+DV_ADD_TEST(event-slicer)
+DV_ADD_TEST(stream-slicer)
+DV_ADD_TEST(stereo-event-slicer)
+DV_ADD_TEST(time-surface)
+DV_ADD_TEST(event-utilities)
+DV_ADD_TEST(multi-stream-slicer)
+DV_ADD_TEST(event-filters)
+DV_ADD_TEST(pixel-accumulator)
+DV_ADD_TEST(utils)
+DV_ADD_TEST(
+	basic-syntax
+	${LIBLZ4}
+	${LIBZSTD}
+	Boost::nowide)

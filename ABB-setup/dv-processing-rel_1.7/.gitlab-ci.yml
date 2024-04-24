@@ -1,0 +1,683 @@
+variables:
+  GIT_SUBMODULE_STRATEGY: normal
+  PACKAGE_REGISTRY_URL: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/${CI_PROJECT_NAME}"
+  PROJECT_NAME: "dv-processing"
+  PROJECT_NAME_INTERNAL: "dv-processing-internal"
+
+default:
+  interruptible: true
+  tags:
+    - docker
+    - ubuntu
+    - build
+
+.version_name: &version_name
+  - export VERSION_NAME=$([[ -z "${RELEASE_VERSION}"  ]] && echo "${CI_COMMIT_TAG}" || echo "${RELEASE_VERSION}")
+
+.change_build_dir: &change_build_dir
+  - rm -Rf build
+  - mkdir build
+  - cd build
+
+.ubuntu_curr_builder: &ubuntu_curr_builder
+  stage: build
+  image: registry.gitlab.com/inivation/infra/docker-files/ubuntu:rolling
+  # Variables is not getting merged, so we use before_script to set CCACHE vars.
+  before_script:
+    - export CCACHE_DIR="${CI_PROJECT_DIR}/.ccache"
+    - export CCACHE_BASEDIR="${CI_PROJECT_DIR}"
+    - export CCACHE_COMPILERCHECK="content"
+    - packaging/linux/build_libcaer.sh "master"
+  script:
+    - *change_build_dir
+    - cmake -DCMAKE_INSTALL_PREFIX=/usr -DENABLE_TESTS=ON -DENABLE_SAMPLES=ON -DENABLE_UTILITIES=ON -DENABLE_BENCHMARKS=ON -DENABLE_PYTHON=ON -DENABLE_DOC_SAMPLES_BUILD=ON ..
+    - make -j4 -s
+    - make test
+  rules:
+    - if: $CI_MERGE_REQUEST_ID
+    - if: $CI_COMMIT_BRANCH
+  cache:
+    key: "${CI_JOB_NAME}-${CI_COMMIT_REF_SLUG}"
+    paths:
+      - .ccache
+    policy: pull-push
+
+sonarcloud_analysis:
+  <<: *ubuntu_curr_builder
+  variables:
+    SONAR_USER_HOME: "${CI_PROJECT_DIR}/.sonar"
+    CMAKE_BUILD_TYPE: "Debug"
+  script:
+    # Recursive symlink randomly breaks SonarCloud.
+    - rm -f tests/external/cli11/tests/mesonTest/subprojects/CLI11
+    - *change_build_dir
+    - cmake -DCMAKE_INSTALL_PREFIX=/usr ..
+    # Run the build inside the build wrapper
+    - /build-wrapper/build-wrapper-linux-x86-64 --out-dir bw-output make -j4
+    # Run the sonar-scanner CLI command
+    - cd ..
+    - /sonar-scanner/bin/sonar-scanner
+  rules:
+    - if: $CI_PROJECT_NAME != $PROJECT_NAME_INTERNAL
+      when: never
+    - if: $CI_COMMIT_BRANCH
+  cache:
+    key: "${CI_JOB_NAME}-${CI_COMMIT_REF_SLUG}"
+    paths:
+      - .sonar/cache
+      - .sonar/c-cache
+      - .ccache
+    policy: pull-push
+  allow_failure: true
+
+build_macos_intel:
+  stage: build
+  tags:
+    - macos
+    - build
+    - x86_64
+  variables:
+    CCACHE_DIR: "${CI_PROJECT_DIR}/.ccache"
+    CCACHE_BASEDIR: "${CI_PROJECT_DIR}"
+    CCACHE_COMPILERCHECK: "content"
+    PATH: "/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/Apple/usr/bin"
+    CTEST_OUTPUT_ON_FAILURE: 1
+    CMAKE_BUILD_TYPE: "Release"
+    CC: clang-llvm
+    CXX: clang++-llvm
+  script:
+    - *change_build_dir
+    - arch -x86_64 /usr/local/bin/cmake -DCMAKE_INSTALL_PREFIX=/usr/local -DOPENSSL_ROOT_DIR=/usr/local/opt/openssl -DPython3_ROOT_DIR=/usr/local/opt/python@3/ -DENABLE_TESTS=ON -DENABLE_SAMPLES=ON -DENABLE_UTILITIES=ON -DENABLE_BENCHMARKS=ON -DENABLE_PYTHON=ON -DENABLE_DOC_SAMPLES_BUILD=ON ..
+    - make -j4
+    - make test
+    - if [[ "${CI_PROJECT_NAME}" != "${PROJECT_NAME_INTERNAL}" ]] ; then exit 0; fi
+    - if [[ "${CI_COMMIT_BRANCH}" != "master" ]] ; then exit 0; fi
+    - rm -Rf /usr/local/include/${PROJECT_NAME}/ /usr/local/lib/cmake/${PROJECT_NAME}/
+    - make install
+  rules:
+    - if: $CI_COMMIT_BRANCH == "master"
+  cache:
+    key: "${CI_JOB_NAME}-${CI_COMMIT_REF_SLUG}"
+    paths:
+      - .ccache
+    policy: pull-push
+
+build_macos_arm:
+  stage: build
+  tags:
+    - macos
+    - build
+    - arm
+  variables:
+    CCACHE_DIR: "${CI_PROJECT_DIR}/.ccache"
+    CCACHE_BASEDIR: "${CI_PROJECT_DIR}"
+    CCACHE_COMPILERCHECK: "content"
+    PATH: "/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/Apple/usr/bin"
+    CTEST_OUTPUT_ON_FAILURE: 1
+    CMAKE_BUILD_TYPE: "Release"
+    CC: clang-llvm
+    CXX: clang++-llvm
+  script:
+    - *change_build_dir
+    - /opt/homebrew/bin/cmake -DCMAKE_INSTALL_PREFIX=/opt/homebrew -DOPENSSL_ROOT_DIR=/opt/homebrew/opt/openssl -DPython3_ROOT_DIR=/opt/homebrew/opt/python@3/ -DENABLE_TESTS=ON -DENABLE_SAMPLES=ON -DENABLE_UTILITIES=ON -DENABLE_BENCHMARKS=ON -DENABLE_PYTHON=ON -DENABLE_DOC_SAMPLES_BUILD=ON ..
+    - make -j4
+    - make test
+    - if [[ "${CI_PROJECT_NAME}" != "${PROJECT_NAME_INTERNAL}" ]] ; then exit 0; fi
+    - if [[ "${CI_COMMIT_BRANCH}" != "master" ]] ; then exit 0; fi
+    - rm -Rf /opt/homebrew/include/${PROJECT_NAME}/ /opt/homebrew/lib/cmake/${PROJECT_NAME}/
+    - make install
+  rules:
+    - if: $CI_MERGE_REQUEST_ID
+    - if: $CI_COMMIT_BRANCH
+  cache:
+    key: "${CI_JOB_NAME}-${CI_COMMIT_REF_SLUG}"
+    paths:
+      - .ccache
+    policy: pull-push
+
+build_windows:
+  stage: build
+  tags:
+    - windows
+    - build
+  variables:
+    MSYSTEM: "MINGW64"
+    CCACHE_DIR: "${CI_PROJECT_DIR}/.ccache"
+    CCACHE_BASEDIR: "${CI_PROJECT_DIR}"
+    CCACHE_COMPILERCHECK: "content"
+    CTEST_OUTPUT_ON_FAILURE: 1
+    CMAKE_BUILD_TYPE: "Release"
+    CC: gcc
+    CXX: g++
+  script:
+    - source /usr/bin/init-paths
+    - *change_build_dir
+    - cmake -G "MSYS Makefiles" -DCMAKE_INSTALL_PREFIX=/mingw64 -DPython3_EXECUTABLE=/mingw64/bin/python3 -DENABLE_TESTS=ON -DENABLE_SAMPLES=ON -DENABLE_UTILITIES=ON -DENABLE_BENCHMARKS=ON -DENABLE_PYTHON=ON -DENABLE_DOC_SAMPLES_BUILD=ON ..
+    - make -j8
+    - make test
+    - if [[ "${CI_PROJECT_NAME}" != "${PROJECT_NAME_INTERNAL}" ]] ; then exit 0; fi
+    - if [[ "${CI_COMMIT_BRANCH}" != "master" ]] ; then exit 0; fi
+    - rm -Rf /mingw64/include/${PROJECT_NAME}/ /mingw64/lib/cmake/${PROJECT_NAME}/
+    - make install
+  rules:
+    - if: $CI_MERGE_REQUEST_ID
+    - if: $CI_COMMIT_BRANCH
+  cache:
+    key: "${CI_JOB_NAME}-${CI_COMMIT_REF_SLUG}"
+    paths:
+      - .ccache
+    policy: pull-push
+
+basic_syntax_check_clang:
+  variables:
+    # Oldest supported clang compiler.
+    # Must be clang 15 as older have compile issues with libstdc++-13.
+    CC: clang-15
+    CXX: clang++-15
+  <<: *ubuntu_curr_builder
+  script:
+    # Generate header files.
+    - cmake -DCMAKE_INSTALL_PREFIX=/usr .
+    # Check syntax.
+    - find include/ -type f -iname '*.hpp' | sort -u > headers.txt
+    - find include/ -type f -iname '*.h' | sort -u >> headers.txt
+    - for h in $(cat headers.txt) ; do echo "\nChecking === ${h}\n\n" ; ${CXX} -std=c++20 -O2 -pipe "${h}" $(pkg-config --cflags opencv4) $(pkg-config --cflags eigen3) ; rm "${h}.gch" ; done
+
+build_ubuntu_1804_release:
+  variables:
+    CC: gcc-10
+    CXX: g++-10
+    CTEST_OUTPUT_ON_FAILURE: 1
+    CMAKE_BUILD_TYPE: "Release"
+  <<: *ubuntu_curr_builder
+  image: registry.gitlab.com/inivation/infra/docker-files/ubuntu:18.04
+
+build_ubuntu_1804_debug:
+  variables:
+    CC: gcc-10
+    CXX: g++-10
+    CTEST_OUTPUT_ON_FAILURE: 1
+    CMAKE_BUILD_TYPE: "Debug"
+  <<: *ubuntu_curr_builder
+  image: registry.gitlab.com/inivation/infra/docker-files/ubuntu:18.04
+
+build_ubuntu_2004_release:
+  variables:
+    CC: gcc-10
+    CXX: g++-10
+    CTEST_OUTPUT_ON_FAILURE: 1
+    CMAKE_BUILD_TYPE: "Release"
+  <<: *ubuntu_curr_builder
+  image: registry.gitlab.com/inivation/infra/docker-files/ubuntu:20.04
+
+build_ubuntu_2004_debug:
+  variables:
+    CC: gcc-10
+    CXX: g++-10
+    CTEST_OUTPUT_ON_FAILURE: 1
+    CMAKE_BUILD_TYPE: "Debug"
+  <<: *ubuntu_curr_builder
+  image: registry.gitlab.com/inivation/infra/docker-files/ubuntu:20.04
+
+build_ubuntu_2204_release:
+  variables:
+    CC: gcc-12
+    CXX: g++-12
+    CTEST_OUTPUT_ON_FAILURE: 1
+    CMAKE_BUILD_TYPE: "Release"
+  <<: *ubuntu_curr_builder
+  image: registry.gitlab.com/inivation/infra/docker-files/ubuntu:22.04
+
+build_ubuntu_2204_debug:
+  variables:
+    CC: gcc-12
+    CXX: g++-12
+    CTEST_OUTPUT_ON_FAILURE: 1
+    CMAKE_BUILD_TYPE: "Debug"
+  <<: *ubuntu_curr_builder
+  image: registry.gitlab.com/inivation/infra/docker-files/ubuntu:22.04
+
+build_ubuntu_gcc10_release:
+  variables:
+    CC: gcc-10
+    CXX: g++-10
+    CTEST_OUTPUT_ON_FAILURE: 1
+    CMAKE_BUILD_TYPE: "Release"
+  <<: *ubuntu_curr_builder
+
+build_ubuntu_gcc10_debug:
+  variables:
+    CC: gcc-10
+    CXX: g++-10
+    CTEST_OUTPUT_ON_FAILURE: 1
+    CMAKE_BUILD_TYPE: "Debug"
+  <<: *ubuntu_curr_builder
+
+build_ubuntu_gcc11_release:
+  variables:
+    CC: gcc-11
+    CXX: g++-11
+    CTEST_OUTPUT_ON_FAILURE: 1
+    CMAKE_BUILD_TYPE: "Release"
+  <<: *ubuntu_curr_builder
+
+build_ubuntu_gcc11_debug:
+  variables:
+    CC: gcc-11
+    CXX: g++-11
+    CTEST_OUTPUT_ON_FAILURE: 1
+    CMAKE_BUILD_TYPE: "Debug"
+  <<: *ubuntu_curr_builder
+
+build_ubuntu_gcc12_release:
+  variables:
+    CC: gcc-12
+    CXX: g++-12
+    CTEST_OUTPUT_ON_FAILURE: 1
+    CMAKE_BUILD_TYPE: "Release"
+  <<: *ubuntu_curr_builder
+
+build_ubuntu_gcc12_debug:
+  variables:
+    CC: gcc-12
+    CXX: g++-12
+    CTEST_OUTPUT_ON_FAILURE: 1
+    CMAKE_BUILD_TYPE: "Debug"
+  <<: *ubuntu_curr_builder
+
+build_ubuntu_gcc13_release:
+  variables:
+    CC: gcc-13
+    CXX: g++-13
+    CTEST_OUTPUT_ON_FAILURE: 1
+    CMAKE_BUILD_TYPE: "Release"
+  <<: *ubuntu_curr_builder
+
+build_ubuntu_gcc13_debug:
+  variables:
+    CC: gcc-13
+    CXX: g++-13
+    CTEST_OUTPUT_ON_FAILURE: 1
+    CMAKE_BUILD_TYPE: "Debug"
+  <<: *ubuntu_curr_builder
+
+build_ubuntu_clang15_release:
+  variables:
+    CC: clang-15
+    CXX: clang++-15
+    CTEST_OUTPUT_ON_FAILURE: 1
+    CMAKE_BUILD_TYPE: "Release"
+  <<: *ubuntu_curr_builder
+
+build_ubuntu_clang15_debug:
+  variables:
+    CC: clang-15
+    CXX: clang++-15
+    CTEST_OUTPUT_ON_FAILURE: 1
+    CMAKE_BUILD_TYPE: "Debug"
+  <<: *ubuntu_curr_builder
+
+build_ubuntu_clang16_release:
+  variables:
+    CC: clang-16
+    CXX: clang++-16
+    CTEST_OUTPUT_ON_FAILURE: 1
+    CMAKE_BUILD_TYPE: "Release"
+  <<: *ubuntu_curr_builder
+
+build_ubuntu_clang16_debug:
+  variables:
+    CC: clang-16
+    CXX: clang++-16
+    CTEST_OUTPUT_ON_FAILURE: 1
+    CMAKE_BUILD_TYPE: "Debug"
+  <<: *ubuntu_curr_builder
+
+release_ubuntu_internal:
+  stage: deploy
+  image: registry.gitlab.com/inivation/infra/docker-files/ubuntu:rolling
+  interruptible: false
+  before_script:
+    - gpg --pinentry-mode loopback --passphrase "${PPA_GPG_KEY_PASS}" --import "${PPA_GPG_KEY}"
+    - echo -e "5\ny\n" | gpg --no-tty --command-fd 0 --edit-key "${PPA_GPG_KEY_ID}" trust quit
+  script:
+    - git-archive-all "${PROJECT_NAME}-${CI_COMMIT_TAG}.tar.gz"
+    - cd packaging/ubuntu-source-package/
+    - ./packageUbuntu.sh --pkg-name "${PROJECT_NAME}" --pkg-version "${CI_COMMIT_TAG}" --internal --distro bionic --gpg-key-id "${PPA_GPG_KEY_ID}" --gpg-key-pass "${PPA_GPG_KEY_PASS}" --upload
+    - sleep 60 # rate-limit connections to PPA upload server
+    - ./packageUbuntu.sh --pkg-name "${PROJECT_NAME}" --pkg-version "${CI_COMMIT_TAG}" --internal --distro focal --gpg-key-id "${PPA_GPG_KEY_ID}" --gpg-key-pass "${PPA_GPG_KEY_PASS}" --upload
+    - sleep 60 # rate-limit connections to PPA upload server
+    - ./packageUbuntu.sh --pkg-name "${PROJECT_NAME}" --pkg-version "${CI_COMMIT_TAG}" --internal --distro jammy --gpg-key-id "${PPA_GPG_KEY_ID}" --gpg-key-pass "${PPA_GPG_KEY_PASS}" --upload
+  rules:
+    - if: $CI_PROJECT_NAME != $PROJECT_NAME_INTERNAL
+      when: never
+    - if: $CI_COMMIT_TAG && $CI_COMMIT_TAG =~ /^[0-9]+\.[0-9]+\.[0-9]+_internal[a-zA-Z0-9]*$/
+
+release_archive_submodules:
+  stage: deploy
+  image: registry.gitlab.com/inivation/infra/docker-files/ubuntu:rolling
+  interruptible: false
+  variables:
+    GIT_STRATEGY: clone
+  script:
+    # This job is required by other release jobs, so to support "web" releases it has to run, but do nothing.
+    - if [[ -n "${RELEASE}" ]] ; then exit 0; fi
+    # Archive all the code, including git submodules and upload as generic package.
+    - git-archive-all "${CI_PROJECT_NAME}-${CI_COMMIT_TAG}.zip"
+    - 'curl --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file "${CI_PROJECT_NAME}-${CI_COMMIT_TAG}.zip" "${PACKAGE_REGISTRY_URL}/${CI_COMMIT_TAG}/${CI_PROJECT_NAME}-${CI_COMMIT_TAG}.zip"'
+    - git-archive-all "${CI_PROJECT_NAME}-${CI_COMMIT_TAG}.tar.gz"
+    - 'curl --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file "${CI_PROJECT_NAME}-${CI_COMMIT_TAG}.tar.gz" "${PACKAGE_REGISTRY_URL}/${CI_COMMIT_TAG}/${CI_PROJECT_NAME}-${CI_COMMIT_TAG}.tar.gz"'
+    # For open-source version, also upload to AWS S3 so build scripts can pick it up.
+    - if [[ "${CI_PROJECT_NAME}" != "${PROJECT_NAME}" ]] ; then exit 0; fi
+    - if [[ "${CI_COMMIT_TAG}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] ; then true; else exit 0; fi
+    - aws s3 cp "${CI_PROJECT_NAME}-${CI_COMMIT_TAG}.zip" "s3://release.inivation.com/processing/${CI_PROJECT_NAME}-${CI_COMMIT_TAG}.zip"
+    - aws s3 cp "${CI_PROJECT_NAME}-${CI_COMMIT_TAG}.tar.gz" "s3://release.inivation.com/processing/${CI_PROJECT_NAME}-${CI_COMMIT_TAG}.tar.gz"
+  rules:
+    - if: $CI_COMMIT_TAG
+    - if: $CI_PIPELINE_SOURCE == "web" && $RELEASE && $RELEASE_VERSION
+
+pages:
+  stage: build
+  image: registry.gitlab.com/inivation/infra/docker-files/ubuntu:docs
+  interruptible: false
+  variables:
+    GIT_STRATEGY: clone
+  script:
+    - cd docs
+    - python3 docs-build.py "${CI_COMMIT_REF_NAME}" "${CI_DEFAULT_BRANCH}"
+    - cp -R build ../public
+  artifacts:
+    paths:
+      - public
+  rules:
+    - if: $CI_COMMIT_TAG
+    - if: $CI_COMMIT_BRANCH
+  resource_group: "${CI_JOB_NAME}"
+  cache:
+    key: "${CI_JOB_NAME}"
+    paths:
+      - docs/build
+    policy: pull-push
+
+release_ubuntu:
+  stage: deploy
+  image: registry.gitlab.com/inivation/infra/docker-files/ubuntu:rolling
+  interruptible: false
+  needs: [ "release_archive_submodules" ]
+  before_script:
+    - gpg --pinentry-mode loopback --passphrase "${PPA_GPG_KEY_PASS}" --import "${PPA_GPG_KEY}"
+    - echo -e "5\ny\n" | gpg --no-tty --command-fd 0 --edit-key "${PPA_GPG_KEY_ID}" trust quit
+    - *version_name
+  script:
+    - cd packaging/ubuntu-source-package/
+    - ./packageUbuntu.sh --pkg-name "${PROJECT_NAME}" --pkg-version "${VERSION_NAME}" --distro bionic --gpg-key-id "${PPA_GPG_KEY_ID}" --gpg-key-pass "${PPA_GPG_KEY_PASS}" --upload
+    - sleep 60 # rate-limit connections to PPA upload server
+    - ./packageUbuntu.sh --pkg-name "${PROJECT_NAME}" --pkg-version "${VERSION_NAME}" --distro focal --gpg-key-id "${PPA_GPG_KEY_ID}" --gpg-key-pass "${PPA_GPG_KEY_PASS}" --upload
+    - sleep 60 # rate-limit connections to PPA upload server
+    - ./packageUbuntu.sh --pkg-name "${PROJECT_NAME}" --pkg-version "${VERSION_NAME}" --distro jammy --gpg-key-id "${PPA_GPG_KEY_ID}" --gpg-key-pass "${PPA_GPG_KEY_PASS}" --upload
+  rules:
+    - if: $CI_PROJECT_NAME != $PROJECT_NAME
+      when: never
+    - if: $CI_COMMIT_TAG && $CI_COMMIT_TAG =~ /^[0-9]+\.[0-9]+\.[0-9]+$/
+    - if: $CI_PIPELINE_SOURCE == "web" && $RELEASE == "Ubuntu" && $RELEASE_VERSION
+
+release_fedora:
+  stage: deploy
+  image: registry.gitlab.com/inivation/infra/docker-files/fedora:latest
+  interruptible: false
+  needs: [ "release_archive_submodules" ]
+  before_script:
+    - mkdir -p ~/.config/
+    - cp "${COPR_API_KEY}" ~/.config/copr
+    - *version_name
+  script:
+    - cd packaging/fedora-source-package/
+    - ./packageFedora.sh --pkg-name "${PROJECT_NAME}" --pkg-version "${VERSION_NAME}"
+    - copr-cli build --nowait inivation/inivation "${PROJECT_NAME}-${VERSION_NAME}-0.fc36.src.rpm"
+  rules:
+    - if: $CI_PROJECT_NAME != $PROJECT_NAME
+      when: never
+    - if: $CI_COMMIT_TAG && $CI_COMMIT_TAG =~ /^[0-9]+\.[0-9]+\.[0-9]+$/
+    - if: $CI_PIPELINE_SOURCE == "web" && $RELEASE == "Fedora" && $RELEASE_VERSION
+
+release_gentoo_arch_brew:
+  stage: deploy
+  image: registry.gitlab.com/inivation/infra/docker-files/gentoo:latest
+  interruptible: false
+  needs: [ "release_archive_submodules" ]
+  before_script:
+    - mkdir -p ~/.ssh/
+    - cp "${GITCI_SSH_KEY}" ~/.ssh/id_ed25519
+    - chmod 0600 ~/.ssh/id_ed25519
+    - ssh-keyscan gitlab.com >> ~/.ssh/known_hosts
+    - ssh-keyscan aur.archlinux.org >> ~/.ssh/known_hosts
+    - cp "${GITCI_SSH_CONF}" ~/.gitconfig
+    - *version_name
+  script:
+    - cd packaging/linux/
+    # Gentoo release
+    - ./gentoo-release.sh --pkg-name "${PROJECT_NAME}" --pkg-version "${VERSION_NAME}" --pkg-category "dev-libs"
+    # Arch release
+    - ./arch-release.sh --pkg-name "${PROJECT_NAME}" --pkg-version "${VERSION_NAME}"
+    # Brew release
+    - ./brew-release.sh --pkg-name "${PROJECT_NAME}" --pkg-version "${VERSION_NAME}"
+  rules:
+    - if: $CI_PROJECT_NAME != $PROJECT_NAME
+      when: never
+    - if: $CI_COMMIT_TAG && $CI_COMMIT_TAG =~ /^[0-9]+\.[0-9]+\.[0-9]+$/
+    - if: $CI_PIPELINE_SOURCE == "web" && $RELEASE == "GentooArchBrew" && $RELEASE_VERSION
+
+# Run pre-commit on all files to make sure it was run on client.
+# This will do all formatting checks in a consistent way.
+pre-commit_check:
+  stage: build
+  image: registry.gitlab.com/inivation/infra/docker-files/ubuntu:rolling
+  before_script:
+    - pre-commit install
+  script:
+    - pre-commit run -a
+  rules:
+    - if: $CI_COMMIT_BRANCH
+
+release_python_linux_x64:
+  stage: deploy
+  image: registry.gitlab.com/inivation/infra/docker-files/ubuntu:rolling
+  tags:
+    - docker
+    - ubuntu
+  before_script:
+    - curl -sSL https://get.docker.com/ | sh
+    - echo "Using registry '${CI_REGISTRY}' with user '${CI_REGISTRY_USER}'"
+    - docker login --username "${CI_REGISTRY_USER}" --password "${CI_REGISTRY_PASSWORD}" "${CI_REGISTRY}"
+    - docker pull registry.gitlab.com/inivation/infra/docker-files/manylinux2014_x86_64_ini:latest
+    - rm -Rf build/ dist/ wheelhouse/
+    - *version_name
+  script:
+    - echo -n "${VERSION_NAME}" > VERSION.txt
+    - cibuildwheel --platform linux --output-dir wheelhouse --archs x86_64
+    - python3 -m build --sdist
+    - mv wheelhouse/*.whl dist/
+    # For open-source version, also upload to PyPi using Twine.
+    - if [[ "${CI_PROJECT_NAME}" != "${PROJECT_NAME}" ]] ; then exit 0; fi
+    - if [[ "${VERSION_NAME}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] ; then true; else exit 0; fi
+    - twine upload -u "inivation" -p "${PYPI_PASSWORD}" dist/*
+  artifacts:
+    paths:
+      - dist/
+  rules:
+    - if: $CI_COMMIT_TAG
+    - if: $CI_PIPELINE_SOURCE == "web" && $RELEASE == "PyLinux" && $RELEASE_VERSION
+
+release_python_linux_x86:
+  stage: deploy
+  image: registry.gitlab.com/inivation/infra/docker-files/ubuntu:rolling
+  tags:
+    - docker
+    - ubuntu
+  before_script:
+    - curl -sSL https://get.docker.com/ | sh
+    - echo "Using registry '${CI_REGISTRY}' with user '${CI_REGISTRY_USER}'"
+    - docker login --username "${CI_REGISTRY_USER}" --password "${CI_REGISTRY_PASSWORD}" "${CI_REGISTRY}"
+    - docker pull registry.gitlab.com/inivation/infra/docker-files/manylinux2014_i686_ini:latest
+    - rm -Rf build/ dist/ wheelhouse/
+    - *version_name
+  script:
+    - echo -n "${VERSION_NAME}" > VERSION.txt
+    - cibuildwheel --platform linux --output-dir wheelhouse --archs i686
+    - mkdir dist/
+    - mv wheelhouse/*.whl dist/
+    # For open-source version, also upload to PyPi using Twine.
+    - if [[ "${CI_PROJECT_NAME}" != "${PROJECT_NAME}" ]] ; then exit 0; fi
+    - if [[ "${VERSION_NAME}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] ; then true; else exit 0; fi
+    - twine upload -u "inivation" -p "${PYPI_PASSWORD}" dist/*
+  artifacts:
+    paths:
+      - dist/
+  rules:
+    - if: $CI_COMMIT_TAG
+    - if: $CI_PIPELINE_SOURCE == "web" && $RELEASE == "PyLinux" && $RELEASE_VERSION
+
+release_python_linux_arm64:
+  stage: deploy
+  image: registry.gitlab.com/inivation/infra/docker-files/ubuntu:rolling
+  timeout: 10h
+  tags:
+    - docker
+    - ubuntu
+    - qemu
+  before_script:
+    - curl -sSL https://get.docker.com/ | sh
+    - echo "Using registry '${CI_REGISTRY}' with user '${CI_REGISTRY_USER}'"
+    - docker login --username "${CI_REGISTRY_USER}" --password "${CI_REGISTRY_PASSWORD}" "${CI_REGISTRY}"
+    - docker pull registry.gitlab.com/inivation/infra/docker-files/manylinux2014_aarch64_ini:latest
+    - rm -Rf build/ dist/ wheelhouse/
+    - *version_name
+  script:
+    - echo -n "${VERSION_NAME}" > VERSION.txt
+    - cibuildwheel --platform linux --output-dir wheelhouse --archs aarch64
+    - mkdir dist/
+    - mv wheelhouse/*.whl dist/
+    # For open-source version, also upload to PyPi using Twine.
+    - if [[ "${CI_PROJECT_NAME}" != "${PROJECT_NAME}" ]] ; then exit 0; fi
+    - if [[ "${VERSION_NAME}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] ; then true; else exit 0; fi
+    - twine upload -u "inivation" -p "${PYPI_PASSWORD}" dist/*
+  artifacts:
+    paths:
+      - dist/
+  rules:
+    - if: $CI_COMMIT_TAG
+    - if: $CI_PIPELINE_SOURCE == "web" && $RELEASE == "PyLinux" && $RELEASE_VERSION
+
+release_python_macos_intel:
+  stage: deploy
+  tags:
+    - macos
+    - build
+    - x86_64
+  variables:
+    PATH: "/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/Apple/usr/bin"
+    CC: clang-llvm
+    CXX: clang++-llvm
+    MACOSX_DEPLOYMENT_TARGET: "10.15"
+  before_script:
+    - rm -Rf build/ dist/ wheelhouse/
+    - *version_name
+  script:
+    - echo -n "${VERSION_NAME}" > VERSION.txt
+    - cibuildwheel --platform macos --archs x86_64 --output-dir wheelhouse
+    - mkdir dist/
+    - mv wheelhouse/*.whl dist/
+    # For open-source version, also upload to PyPi using Twine.
+    - if [[ "${CI_PROJECT_NAME}" != "${PROJECT_NAME}" ]] ; then exit 0; fi
+    - if [[ "${VERSION_NAME}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] ; then true; else exit 0; fi
+    - twine upload -u "inivation" -p "${PYPI_PASSWORD}" dist/*
+  artifacts:
+    paths:
+      - dist/
+  rules:
+    - if: $CI_COMMIT_TAG
+    - if: $CI_PIPELINE_SOURCE == "web" && $RELEASE == "PyMacos" && $RELEASE_VERSION
+
+release_python_macos_arm:
+  stage: deploy
+  tags:
+    - macos
+    - build
+    - arm
+  variables:
+    PATH: "/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/Apple/usr/bin"
+    CC: clang-llvm
+    CXX: clang++-llvm
+    MACOSX_DEPLOYMENT_TARGET: "11.0"
+  before_script:
+    - rm -Rf build/ dist/ wheelhouse/
+    - *version_name
+  script:
+    - echo -n "${VERSION_NAME}" > VERSION.txt
+    - cibuildwheel --platform macos --archs arm64 --output-dir wheelhouse
+    - mkdir dist/
+    - mv wheelhouse/*.whl dist/
+    # For open-source version, also upload to PyPi using Twine.
+    - if [[ "${CI_PROJECT_NAME}" != "${PROJECT_NAME}" ]] ; then exit 0; fi
+    - if [[ "${VERSION_NAME}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] ; then true; else exit 0; fi
+    - twine upload -u "inivation" -p "${PYPI_PASSWORD}" dist/*
+  artifacts:
+    paths:
+      - dist/
+  rules:
+    - if: $CI_COMMIT_TAG
+    - if: $CI_PIPELINE_SOURCE == "web" && $RELEASE == "PyMacos" && $RELEASE_VERSION
+
+release_python_windows_x64:
+  stage: deploy
+  tags:
+    - windows
+    - build
+  variables:
+    MSYSTEM: "MINGW64"
+  before_script:
+    - rm -Rf build/ dist/ wheelhouse/
+    - *version_name
+  script:
+    - echo -n "${VERSION_NAME}" > VERSION.txt
+    - source /usr/bin/init-paths
+    - python3 packaging/windows/run-bat.py "packaging\windows\setup-msvc-vcpkg-x64.bat"
+    - mkdir dist/
+    - mv wheelhouse/*.whl dist/
+    # For open-source version, also upload to PyPi using Twine.
+    - if [[ "${CI_PROJECT_NAME}" != "${PROJECT_NAME}" ]] ; then exit 0; fi
+    - if [[ "${VERSION_NAME}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] ; then true; else exit 0; fi
+    - twine upload -u "inivation" -p "${PYPI_PASSWORD}" dist/*
+  artifacts:
+    paths:
+      - dist/
+  rules:
+    - if: $CI_COMMIT_TAG
+    - if: $CI_PIPELINE_SOURCE == "web" && $RELEASE == "PyWindows" && $RELEASE_VERSION
+
+release_python_windows_x86:
+  stage: deploy
+  tags:
+    - windows
+    - build
+  variables:
+    MSYSTEM: "MINGW64"
+  before_script:
+    - rm -Rf build/ dist/ wheelhouse/
+    - *version_name
+  script:
+    - echo -n "${VERSION_NAME}" > VERSION.txt
+    - source /usr/bin/init-paths
+    - python3 packaging/windows/run-bat.py "packaging\windows\setup-msvc-vcpkg-x86.bat"
+    - mkdir dist/
+    - mv wheelhouse/*.whl dist/
+    # For open-source version, also upload to PyPi using Twine.
+    - if [[ "${CI_PROJECT_NAME}" != "${PROJECT_NAME}" ]] ; then exit 0; fi
+    - if [[ "${VERSION_NAME}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] ; then true; else exit 0; fi
+    - twine upload -u "inivation" -p "${PYPI_PASSWORD}" dist/*
+  artifacts:
+    paths:
+      - dist/
+  rules:
+    - if: $CI_COMMIT_TAG
+    - if: $CI_PIPELINE_SOURCE == "web" && $RELEASE == "PyWindows" && $RELEASE_VERSION

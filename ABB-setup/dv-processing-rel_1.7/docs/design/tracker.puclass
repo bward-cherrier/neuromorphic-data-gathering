@@ -1,0 +1,57 @@
+@startuml
+
+ImageFrameLKTracker <|-[dashed]- TrackerBase
+EventFeatureLKTracker <|-[dashed]- ImageFrameLKTracker
+FeatureCountRedetection <|-[dashed]- RedetectionStrategy
+ImageFrameLKTracker *-- RedetectionStrategy
+ImageFrameLKTracker *-- ImageFeatureDetector
+TrackerBase *-- TrackerBaseResult
+
+class TrackerBaseResult {
+    + timestamp: int64_t
+    + keypoints: std::vector<cv::KeyPoint>
+    + keypointTimestamps: std::vector<int64_t>
+}
+
+class TrackerBase {
+    # maxTracks: size_t
+    # lastFrameResults: TrackerBase::Result
+    # virtual track(): TrackerBase::Result
+    + getMaxTracks(): size_t
+    + getLastFrameResults(): TrackerBase::Result
+    + runTracking(): TrackerBase::Result
+    + removeTracks(trackIds: std::vector<int>)
+}
+
+class EventFeatureLKTracker << ImageFrameLKTracker >> {
+    # accumulator : dv::Accumulator
+    # virtual track(): TrackerBase::Result
+    + addEventInput(store : dv::EventStore)
+    - addImageInput(image : cv::Mat)
+}
+
+class ImageFrameLKTracker << TrackerBase >> {
+    # redetectionStrategy: RedetectionStrategy
+
+    # virtual track(): TrackerBase::Result
+    + addImageInput(image : cv::Mat)
+}
+
+class RedetectionStrategy {
+    + virtual decideRedetection(tracker: TrackerBase): bool
+}
+
+class FeatureCountRedetection <<RedetectionStrategy>> {
+    # minFeatureCount: float
+    + decideRedetection(tracker: TrackerBase): bool
+}
+
+class ImageFeatureDetector {
+    # detector: cv::Feature2D
+    + detect(image: cv::Mat): std::vector<cv::KeyPoint>
+    + redetect(priorKeypoints: std::vector<cv::KeyPoint>, image: cv::Mat):
+
+                                                                                                                                      }
+
+
+@enduml

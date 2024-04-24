@@ -1,0 +1,124 @@
+# dv-processing
+# -------
+#
+# cmake configuration for dv-processing
+#
+# IMPORTED Targets
+# ^^^^^^^^^^^^^^^^
+#
+# ``dv::processing`` the headers
+#
+# Result VARIABLES
+# ^^^^^^^^^^^^^^^^
+#
+# ``dv-processing_FOUND`` ``TRUE`` if the library and all required components were found. If ``FALSE`` do not use the
+# library.
+#
+# ``dv-processing_VERSION`` version as "MM.mm.pp[-rev]"
+#
+# ``dv-processing_VERSION_(MAJOR|MINOR|PATCH)`` the version components
+#
+
+# Boost support. Search in extra directory for custom version.
+IF(EXISTS ${CMAKE_SYSROOT}/opt/inivation/boost/)
+	SET(BOOST_ROOT ${CMAKE_SYSROOT}/opt/inivation/boost/)
+	SET(Boost_NO_SYSTEM_PATHS ON)
+	SET(Boost_NO_BOOST_CMAKE ON)
+ENDIF()
+
+FIND_PACKAGE(Boost 1.76 REQUIRED COMPONENTS nowide)
+
+# SSL encryption and certificates support for boost::ASIO.
+FIND_PACKAGE(OpenSSL REQUIRED)
+
+# Eigen support.
+FIND_PACKAGE(Eigen3 3.4.0 REQUIRED)
+
+# OpenCV support.
+FIND_PACKAGE(OpenCV REQUIRED)
+IF(OpenCV_VERSION VERSION_LESS "4.2.0")
+	MESSAGE(FATAL_ERROR "Cannot find OpenCV 4.2.0 or newer.")
+ENDIF()
+
+# libfmt support for C++ string formatting.
+FIND_PACKAGE(fmt 8.1.1 REQUIRED)
+
+# Direct device access support.
+FIND_PACKAGE(libcaer 3.3.14 REQUIRED)
+
+# Compression support: LZ4 and ZSTD
+# A bit different than main CMakeLists.txt due to already knowing the target name.
+FIND_PACKAGE(lz4 QUIET)
+IF(NOT lz4_FOUND)
+	# Search for external libraries with pkg-config.
+	INCLUDE(FindPkgConfig)
+
+	PKG_CHECK_MODULES(liblz4 IMPORTED_TARGET liblz4)
+
+	IF(NOT liblz4_FOUND)
+		# Fall back to library path.
+		FIND_LIBRARY(LIBLZ4 lz4)
+		IF(${LIBLZ4} STREQUAL "LIBLZ4-NOTFOUND")
+			MESSAGE(FATAL_ERROR "lz4 not found, required for I/O compression.")
+		ENDIF()
+	ENDIF()
+ENDIF()
+
+FIND_PACKAGE(zstd QUIET)
+IF(NOT zstd_FOUND)
+	# Search for external libraries with pkg-config.
+	INCLUDE(FindPkgConfig)
+
+	PKG_CHECK_MODULES(libzstd IMPORTED_TARGET libzstd)
+
+	IF(NOT libzstd_FOUND)
+		# Fall back to library path.
+		FIND_LIBRARY(LIBZSTD zstd)
+		IF(${LIBZSTD} STREQUAL "LIBZSTD-NOTFOUND")
+			MESSAGE(FATAL_ERROR "zstd not found, required for I/O compression.")
+		ENDIF()
+	ENDIF()
+ENDIF()
+
+@PACKAGE_INIT@
+
+INCLUDE(@PACKAGE_CMAKE_EXPORT_DESTINATION@/dv-processing-targets.cmake)
+
+CHECK_REQUIRED_COMPONENTS(dv-processing)
+
+# Basic setup, useful variables, see docs. All warnings not enabled. Must be at end of file to pick up own path value
+# properly.
+INCLUDE(@PACKAGE_CMAKE_EXPORT_DESTINATION@/inivation-setup.cmake)
+
+# Compiler compatibility testing starts GCC has to be at least version 10
+IF(CC_GCC AND ${CMAKE_CXX_COMPILER_VERSION} VERSION_LESS "10.0.0")
+	MESSAGE(
+		FATAL_ERROR
+			"The gcc compiler version is not supported (${CMAKE_CXX_COMPILER_VERSION}), please use gcc compiler of at least version 10.0"
+	)
+ENDIF()
+
+# CLang needs at least version 13
+IF(CC_CLANG AND ${CMAKE_CXX_COMPILER_VERSION} VERSION_LESS "13.0.0")
+	MESSAGE(
+		FATAL_ERROR
+			"The clang compiler version is not supported (${CMAKE_CXX_COMPILER_VERSION}), please use clang compiler of at least version 13.0"
+	)
+ENDIF()
+
+# MSVC needs at least version 19.29
+IF(CC_MSVC AND ${CMAKE_CXX_COMPILER_VERSION} VERSION_LESS "19.29")
+	MESSAGE(
+		FATAL_ERROR
+			"The MSVC compiler version is not supported (${CMAKE_CXX_COMPILER_VERSION}), please use MSVC compiler of at least version 19.29"
+	)
+ENDIF()
+
+# Others are unknown, so it can lead
+IF(NOT CC_GCC AND NOT CC_CLANG AND NOT CC_MSVC)
+	MESSAGE(
+		WARNING
+			"The compiler you are using was not verified with dv-processing, make sure it supports full C++20 feature-set, otherwise missing C++20 features can prevent the project from compilation."
+	)
+ENDIF()
+# Compiler compatibility testing ends

@@ -1,0 +1,19 @@
+CMAKE_MINIMUM_REQUIRED(VERSION 3.22)
+
+PROJECT(
+	multi-stream-slicing-sample
+	VERSION 0.1.0
+	LANGUAGES C CXX)
+
+SET(CMAKE_CXX_STANDARD 20)
+
+IF(NOT TARGET dv::processing)
+	FIND_PACKAGE(dv-processing 1.7.0 REQUIRED)
+ENDIF()
+IF(NOT TARGET CLI11::CLI11)
+	FIND_PACKAGE(CLI11 CONFIG REQUIRED)
+ENDIF()
+
+ADD_EXECUTABLE(multi-stream-slicing multi-stream-slicing.cpp)
+
+TARGET_LINK_LIBRARIES(multi-stream-slicing PRIVATE dv::processing CLI11::CLI11)

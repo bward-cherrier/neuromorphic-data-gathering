@@ -1,0 +1,73 @@
+    set_tcp(p[0.0,0.0,0.1105,0.0,0.0,0.0])
+    set_payload(0.27, [0.0, 0.0, 0.09])
+    set_gravity([0.0, 0.0, 9.82])
+
+    global speed = 0.03
+    global socket_status=socket_open("164.11.72.196",30000)
+    movel([1.2927662733996899, -1.8118695446264619, 1.8709870416738177, -1.6295489610511362, -1.5591304626275218, -0.27512099977744064], a=0.07, v=speed)
+
+    while (socket_status != True):
+      global socket_status=socket_open("164.11.72.196",30000)
+      sleep(0.5)
+    end
+
+    socket_send_string("ready")
+
+    while (True):
+      global op_code=socket_read_string()
+      while op_code == "":
+        op_code=socket_read_string()
+      end
+
+      if op_code == "movel":
+        socket_send_string("ack")
+        global pose_msg=socket_read_ascii_float(6)
+        while (pose_msg[0] == 0):
+          global pose_msg=socket_read_ascii_float(6)
+        end
+        global pose=p[pose_msg[1],pose_msg[2],pose_msg[3],pose_msg[4],pose_msg[5],pose_msg[6]]
+
+        movel(pose_trans(p[0.0,0.0,0.0,0.0,0.0,0.0], pose), a=0.04, v=speed)
+        socket_send_string("ack")
+
+      elif op_code == "movej":
+        socket_send_string("ack")
+        global joints_msg=socket_read_ascii_float(6)
+        while (joints_msg[0] == 0):
+          global joints_msg=socket_read_ascii_float(6)
+        end
+        global joints=[joints_msg[1],joints_msg[2],joints_msg[3],joints_msg[4],joints_msg[5],joints_msg[6]]
+
+        movej(joints, a=0.2, v=0.2)
+        socket_send_string("ack")
+
+      elif op_code == "getj":
+        socket_send_string("ack")
+        global joints_pos = get_actual_joint_positions()
+        socket_send_string(joints_pos)
+        socket_send_byte(13)
+        socket_send_byte(10)
+
+      elif op_code == "getpose":
+        socket_send_string("ack")
+        global tcp_pose = get_actual_tcp_pose()
+        socket_send_string(tcp_pose)
+        socket_send_byte(13)
+        socket_send_byte(10)
+
+      elif op_code == "setspeed":
+        socket_send_string("ack")
+        global speed_msg = socket_read_ascii_float(1)
+        while (speed_msg[0] == 0):
+          global speed_msg=socket_read_ascii_float(1)
+        end
+        global speed = speed_msg[1]
+        socket_send_string("ack")
+
+      else:
+        popup("Invalid operation code")
+
+      end
+      sync()
+    end
+    socket_close()

@@ -1,0 +1,36 @@
+
+namespace dv;
+
+/// Structure representing absolute position of a 3D point
+struct Point3f {
+    x: float;
+    y: float;
+    z: float;
+}
+
+/// Structure representing absolute position of a 2D point
+struct Point2f {
+    x: float;
+    y: float;
+}
+
+/// Structure representing a 3D vector
+struct Vec3f {
+    x: float;
+    y: float;
+    z: float;
+}
+
+/// Structure representing a 2D vector
+struct Vec2f {
+    x: float;
+    y: float;
+}
+
+/// Quaternion with Eigen compatible memory layout, should follow the Hamilton convention
+struct Quaternion {
+    w: float;
+    x: float;
+    y: float;
+    z: float;
+}

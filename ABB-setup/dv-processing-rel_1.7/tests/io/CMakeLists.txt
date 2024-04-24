@@ -1,0 +1,12 @@
+FILE(COPY test_files DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+
+DV_ADD_TEST(read-file)
+DV_ADD_TEST(write-file)
+DV_ADD_TEST(mono-camera-recording)
+DV_ADD_TEST(mono-camera-writer)
+DV_ADD_TEST(stereo-camera-writer)
+DV_ADD_TEST(stereo-camera-recording)
+DV_ADD_TEST(camera-capture)
+DV_ADD_TEST(io-stream)
+DV_ADD_TEST(network-reader)
+DV_ADD_TEST(network-writer)

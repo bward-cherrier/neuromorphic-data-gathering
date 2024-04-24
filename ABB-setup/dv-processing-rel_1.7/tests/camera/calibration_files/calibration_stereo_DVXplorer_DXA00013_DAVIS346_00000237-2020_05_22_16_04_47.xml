@@ -1,0 +1,101 @@
+<?xml version="1.0"?>
+<opencv_storage>
+    <DVXplorer_DXA00013>
+        <camera_matrix type_id="opencv-matrix">
+            <rows>3</rows>
+            <cols>3</cols>
+            <dt>d</dt>
+            <data>
+                6.2148239647287551e+02 0. 3.0355112106506493e+02 0.
+                6.1967984541524766e+02 2.0298304466307965e+02 0. 0. 1.
+            </data>
+        </camera_matrix>
+        <distortion_coefficients type_id="opencv-matrix">
+            <rows>14</rows>
+            <cols>1</cols>
+            <dt>d</dt>
+            <data>
+                -3.3340488011285940e-01 1.0723352202460688e-01
+                7.8182065238027493e-04 4.9430253970448937e-03
+                2.7710169366544732e-02 0. 0. 0. 0. 0. 0. 0. 0. 0.
+            </data>
+        </distortion_coefficients>
+        <image_width>640</image_width>
+        <image_height>480</image_height>
+    </DVXplorer_DXA00013>
+    <DAVIS346_00000237>
+        <camera_matrix type_id="opencv-matrix">
+            <rows>3</rows>
+            <cols>3</cols>
+            <dt>d</dt>
+            <data>
+                2.8131561325434711e+02 0. 1.6155262089309414e+02 0.
+                2.8116167807228175e+02 1.4030760389593718e+02 0. 0. 1.
+            </data>
+        </camera_matrix>
+        <distortion_coefficients type_id="opencv-matrix">
+            <rows>14</rows>
+            <cols>1</cols>
+            <dt>d</dt>
+            <data>
+                -3.6756761890587020e-01 2.4190466459564305e-01
+                -4.8777858299379924e-03 6.2374284271430604e-04
+                -1.2837915833103272e-01 0. 0. 0. 0. 0. 0. 0. 0. 0.
+            </data>
+        </distortion_coefficients>
+        <image_width>346</image_width>
+        <image_height>260</image_height>
+    </DAVIS346_00000237>
+    <R type_id="opencv-matrix">
+        <rows>3</rows>
+        <cols>3</cols>
+        <dt>d</dt>
+        <data>
+            9.9953736775553004e-01 2.5064401135846447e-03
+            -3.0311189655032208e-02 -3.9684369888231055e-03
+            9.9882647064930574e-01 -4.8269379922651540e-02
+            3.0154634274221572e-02 4.8367336997281019e-02 9.9837432796701020e-01
+        </data>
+    </R>
+    <T type_id="opencv-matrix">
+        <rows>3</rows>
+        <cols>1</cols>
+        <dt>d</dt>
+        <data>
+            -1.1787110299181222e+02 -6.2272086833628721e+00
+            -3.8989128331782176e+01
+        </data>
+    </T>
+    <E type_id="opencv-matrix">
+        <rows>3</rows>
+        <cols>3</cols>
+        <dt>d</dt>
+        <data>
+            -3.4250509942987950e-01 3.8642179944386235e+01
+            -8.0990663326625487e+00 -3.5416730701614917e+01
+            5.6033874454017223e+00 1.1886129009952981e+02 6.6920918208589910e+00
+            -1.1771716966721299e+02 5.5008109487908978e+00
+        </data>
+    </E>
+    <F type_id="opencv-matrix">
+        <rows>3</rows>
+        <cols>3</cols>
+        <dt>d</dt>
+        <data>
+            1.3589456728405592e-07 -1.5376522644867407e-05
+            5.0770179701542751e-03 1.4059867640988363e-05
+            -2.2309245168360729e-06 -3.3140319752933474e-02
+            -2.7416091722075784e-03 1.5974546332895866e-02 1.
+        </data>
+    </F>
+    <type>stereo</type>
+    <pattern_width>9</pattern_width>
+    <pattern_height>5</pattern_height>
+    <pattern_type>asymmetricCirclesGrid</pattern_type>
+    <board_width>10</board_width>
+    <board_height>6</board_height>
+    <square_size>75.</square_size>
+    <epipolar_error>0.123</epipolar_error>
+    <calibration_error>1.2488455246819389e+02</calibration_error>
+    <calibration_time>"05/22/20 16:04:47"</calibration_time>
+</opencv_storage>

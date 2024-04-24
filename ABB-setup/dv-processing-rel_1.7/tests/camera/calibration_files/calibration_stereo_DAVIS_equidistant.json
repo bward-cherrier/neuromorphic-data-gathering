@@ -1,0 +1,169 @@
+{
+    "version": "2.0",
+    "cameras": {
+        "C0": {
+            "name": "DAVIS346_00000668",
+            "position": "left",
+            "master": "true",
+            "resolution": [
+                "346",
+                "260"
+            ],
+            "principalPoint": [
+                "175.044815",
+                "139.301224"
+            ],
+            "focalLength": [
+                "222.395355",
+                "222.470474"
+            ],
+            "distortionCoefficients": [
+                "-0.0234784577",
+                "0.000686703075",
+                "-0.00812580902",
+                "0.00519397343"
+            ],
+            "distortionModel": "equidistant",
+            "transformationToC0": [
+                "1",
+                "8.19292117e-13",
+                "4.01688882e-12",
+                "6.7421767e-12",
+                "-8.19292117e-13",
+                "1",
+                "2.78137474e-12",
+                "5.70894894e-13",
+                "-4.01688882e-12",
+                "-2.78137474e-12",
+                "1",
+                "2.50289147e-11",
+                "0",
+                "0",
+                "0",
+                "1"
+            ],
+            "metadata": {
+                "patternShape": [
+                    "6",
+                    "6"
+                ],
+                "internalPatternShape": [
+                    "6",
+                    "6"
+                ],
+                "patternType": "aprilGrid",
+                "patternSize": "0.0309999995",
+                "patternSpacing": "0.300000012",
+                "calibrationError": "0.145524576",
+                "calibrationTime": "2022-04-01T14-26-57Z",
+                "quality": "good",
+                "comment": ""
+            }
+        },
+        "C1": {
+            "name": "DAVIS346_00000499",
+            "position": "right",
+            "master": "false",
+            "resolution": [
+                "346",
+                "260"
+            ],
+            "principalPoint": [
+                "167.958954",
+                "126.480309"
+            ],
+            "focalLength": [
+                "224.160126",
+                "224.174469"
+            ],
+            "distortionCoefficients": [
+                "-0.0172413588",
+                "-0.00362377102",
+                "-0.0100133866",
+                "0.0100494847"
+            ],
+            "distortionModel": "equidistant",
+            "transformationToC0": [
+                "0.99844867",
+                "0.00883684773",
+                "0.0549741574",
+                "-0.0589297973",
+                "-0.00893960241",
+                "0.999958694",
+                "0.00162350782",
+                "-0.000318855047",
+                "-0.0549575426",
+                "-0.00211243634",
+                "0.998486459",
+                "-0.00942778215",
+                "0",
+                "0",
+                "0",
+                "1"
+            ],
+            "metadata": {
+                "patternShape": [
+                    "6",
+                    "6"
+                ],
+                "internalPatternShape": [
+                    "6",
+                    "6"
+                ],
+                "patternType": "aprilGrid",
+                "patternSize": "0.0309999995",
+                "patternSpacing": "0.300000012",
+                "calibrationError": "0.145524576",
+                "calibrationTime": "2022-04-01T14-26-57Z",
+                "quality": "good",
+                "comment": ""
+            }
+        }
+    },
+    "imus": {
+        "S0": {
+            "name": "DAVIS346_00000668",
+            "omegaMax": "7.80000019",
+            "accMax": "176",
+            "omegaOffsetAvg": [
+                "0",
+                "0",
+                "0"
+            ],
+            "accOffsetAvg": [
+                "0",
+                "0",
+                "0"
+            ],
+            "omegaOffsetVar": "0.0299999993",
+            "accOffsetVar": "0.100000001",
+            "omegaNoiseDensity": "0.000180000003",
+            "accNoiseDensity": "0.00200000009",
+            "omegaNoiseRandomWalk": "0.00100000005",
+            "accNoiseRandomWalk": "3.9999999e-05",
+            "timeOffsetMicros": "-23529",
+            "transformationToC0": [
+                "-0.988503933",
+                "-0.071611844",
+                "-0.13316071",
+                "-0.0152968457",
+                "-0.0987095013",
+                "0.972790539",
+                "0.209606871",
+                "-0.0393041745",
+                "0.114527144",
+                "0.220341444",
+                "-0.968675971",
+                "0.0450492986",
+                "0",
+                "0",
+                "0",
+                "1"
+            ],
+            "metadata": {
+                "calibrationTime": "2022-04-01T14-26-57Z",
+                "comment": "Time offset usage: t_correct = t_imu - offset Mean reprojection error: 0.710882 Mean acc error: 0.167103 Mean gyroscope error: 0.0360631"
+            }
+        }
+    }
+}

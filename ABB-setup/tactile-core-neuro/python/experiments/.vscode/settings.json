@@ -1,0 +1,9 @@
+{
+<<<<<<< HEAD
+    "python.pythonPath": "/home/bw14452/anaconda3/envs/neuroscience/bin/python",
+=======
+    "python.pythonPath": "C:\\Users\\Ben\\Anaconda3\\python.exe",
+>>>>>>> 169db60179ea8d4563cc2aee68dca4dfe49f13ef
+    "python.linting.pylintEnabled": true,
+    "python.linting.enabled": true
+}

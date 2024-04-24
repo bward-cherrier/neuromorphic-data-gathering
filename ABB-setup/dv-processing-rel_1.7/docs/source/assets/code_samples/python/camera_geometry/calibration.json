@@ -1,0 +1,104 @@
+{
+    "version": "2.0",
+    "cameras": {
+        "C0": {
+            "name": "DVXplorer_DXA000312",
+            "position": "left",
+            "master": "true",
+            "resolution": [
+                "640",
+                "480"
+            ],
+            "principalPoint": [
+                "320",
+                "240"
+            ],
+            "focalLength": [
+                "640",
+                "640"
+            ],
+            "distortionCoefficients": "",
+            "distortionModel": "none",
+            "transformationToC0": [
+                "1",
+                "0",
+                "0",
+                "0",
+                "0",
+                "1",
+                "0",
+                "0",
+                "0",
+                "0",
+                "1",
+                "0",
+                "0",
+                "0",
+                "0",
+                "1"
+            ],
+            "metadata": {
+                "patternShape": [
+                    "0",
+                    "0"
+                ],
+                "internalPatternShape": [
+                    "0",
+                    "0"
+                ],
+                "patternType": "",
+                "patternSize": "-1",
+                "patternSpacing": "-1",
+                "calibrationTime": "",
+                "quality": "",
+                "comment": ""
+            }
+        }
+    },
+    "imus": {
+        "S0": {
+            "name": "DVXplorer_DXA000312",
+            "omegaMax": "100",
+            "accMax": "98.0999985",
+            "omegaOffsetAvg": [
+                "0",
+                "0",
+                "0"
+            ],
+            "accOffsetAvg": [
+                "0",
+                "0",
+                "0"
+            ],
+            "omegaOffsetVar": "1",
+            "accOffsetVar": "1",
+            "omegaNoiseDensity": "1",
+            "accNoiseDensity": "1",
+            "omegaNoiseRandomWalk": "1",
+            "accNoiseRandomWalk": "1",
+            "timeOffsetMicros": "3500",
+            "transformationToC0": [
+                "1",
+                "0",
+                "0",
+                "0",
+                "0",
+                "1",
+                "0",
+                "0",
+                "0",
+                "0",
+                "1",
+                "0",
+                "0",
+                "0",
+                "0",
+                "1"
+            ],
+            "metadata": {
+                "calibrationTime": "",
+                "comment": ""
+            }
+        }
+    }
+}

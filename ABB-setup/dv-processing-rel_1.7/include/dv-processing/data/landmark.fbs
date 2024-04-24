@@ -1,0 +1,44 @@
+native_include "cvector.hpp";
+native_include "cstring.hpp";
+
+include "geometry_types.fbs";
+
+file_identifier "LMRS";
+
+namespace dv;
+
+table Observation {
+    /// The tracking sequence ID that the landmark is observed by a camera
+    trackId: int;
+    /// Arbitrary ID of the camera, this can be application specific
+    cameraId: int32;
+    /// Name of the camera. Optional.
+    cameraName: string;
+    /// Timestamp of the observation (µs).
+    timestamp: int64;
+}
+
+table Landmark {
+    /// 3D coordinate of the landmark.
+    pt: Point3f (native_inline);
+    /// Landmark id (if the keypoints need to be clustered by an object they belong to).
+    id: int64;
+    /// Timestamp (µs).
+    timestamp: int64;
+    /// Visual descriptor of the landmark.
+    descriptor: [byte];
+    /// Type of the visual descriptor
+    descriptorType: string;
+    /// Covariance matrix, must contain 9 numbers. It is represented as a 3x3 square matrix.
+    covariance: [float];
+    /// Observation info, can be from multiple cameras if they are matched using descriptor.
+    observations: [Observation] (native_inline);
+}
+
+table LandmarksPacket {
+	elements: [Landmark] (native_inline);
+    /// Coordinate reference frame of the landmarks, "world" coordinate frame by default
+    referenceFrame: string;
+}
+
+root_type LandmarksPacket;

@@ -1,0 +1,26 @@
+native_include "cvector.hpp";
+
+file_identifier "DFRM";
+
+namespace dv;
+
+/// A frame containing pixel depth values in millimeters.
+table DepthFrame {
+	/// Central timestamp (µs), corresponds to exposure midpoint.
+	timestamp: int64;
+	/// Start of Frame (SOF) timestamp.
+	sizeX: int16;
+	/// Y axis length in pixels.
+	sizeY: int16;
+	/// Minimum valid depth value.
+	minDepth: uint16 = 0;
+	/// Maximum valid depth value.
+	maxDepth: uint16 = 65535;
+	/// Depth step value, minimal depth distance that can be measured by the sensor setup.
+	step: uint16 = 1;
+	/// Depth values, unsigned 16bit integers, millimeters from the camera frame, following the OpenNI standard.
+	/// Depth value of 0 should be considered an invalid value.
+	depth: [uint16];
+}
+
+root_type DepthFrame;

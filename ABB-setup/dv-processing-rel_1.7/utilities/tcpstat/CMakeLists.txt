@@ -1,0 +1,5 @@
+ADD_EXECUTABLE(dv-tcpstat tcpstat.cpp)
+
+TARGET_LINK_LIBRARIES(dv-tcpstat PRIVATE dv::processing CLI11::CLI11)
+
+INSTALL(TARGETS dv-tcpstat DESTINATION ${CMAKE_INSTALL_BINDIR})

@@ -1,0 +1,44 @@
+{
+  "version": 3,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 22,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "developer-release",
+      "displayName": "Developer Release Config",
+      "description": "Release build using Ninja generator of everything.",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build-release",
+      "installDir": "${sourceDir}/build-install",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "ENABLE_TESTS": "ON",
+        "ENABLE_SAMPLES": "ON",
+        "ENABLE_UTILITIES": "ON",
+        "ENABLE_BENCHMARKS": "ON",
+        "ENABLE_PYTHON": "ON",
+        "ENABLE_DOC_SAMPLES_BUILD": "ON"
+      }
+    },
+    {
+      "name": "developer-debug",
+      "displayName": "Developer Debug Config",
+      "description": "Debug build using Ninja generator of everything.",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build-debug",
+      "installDir": "${sourceDir}/build-install",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "ENABLE_TESTS": "ON",
+        "ENABLE_SAMPLES": "ON",
+        "ENABLE_UTILITIES": "ON",
+        "ENABLE_BENCHMARKS": "ON",
+        "ENABLE_PYTHON": "ON",
+        "ENABLE_DOC_SAMPLES_BUILD": "ON"
+      }
+    }
+  ]
+}

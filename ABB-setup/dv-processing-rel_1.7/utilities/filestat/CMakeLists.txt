@@ -1,0 +1,5 @@
+ADD_EXECUTABLE(dv-filestat filestat.cpp)
+
+TARGET_LINK_LIBRARIES(dv-filestat PRIVATE dv::processing CLI11::CLI11)
+
+INSTALL(TARGETS dv-filestat DESTINATION ${CMAKE_INSTALL_BINDIR})

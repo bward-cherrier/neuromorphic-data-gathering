@@ -1,0 +1,16 @@
+[submodule "tests/external/cli11"]
+	path = tests/external/cli11
+	url = https://github.com/CLIUtils/CLI11.git
+[submodule "tests/external/boost-ut"]
+	path = tests/external/boost-ut
+	url = https://github.com/boost-ext/ut.git
+[submodule "cmake/modules"]
+	path = cmake/modules
+	url = https://gitlab.com/inivation/dv/cmakemod.git
+[submodule "python/external/pybind11"]
+	path = python/external/pybind11
+	url = https://github.com/pybind/pybind11.git
+	branch = stable
+[submodule "python/external/pybind11_opencv_numpy"]
+	path = python/external/pybind11_opencv_numpy
+	url = https://github.com/edmBernard/pybind11_opencv_numpy.git

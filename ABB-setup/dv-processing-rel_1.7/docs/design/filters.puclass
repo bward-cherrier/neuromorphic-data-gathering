@@ -1,0 +1,76 @@
+@startuml
+
+scale 600 width
+title Available event filters in dv::processing
+left to right direction
+
+namespace dv {
+
+EventFilterBase <|-- EventRegionFilter
+EventFilterBase <|-- EventPolarityFilter
+EventFilterBase <|-- EventFilterChain
+EventFilterBase <|-- RefractoryPeriodFilter
+EventFilterBase <|-- EventMaskFilter
+EventFilterBase <|-- dv.noise.BackgroundActivityNoiseFilter
+EventFilterBase <|-- dv.noise.FastDecayNoiseFilter
+
+class EventFilterBase {
+    + accept(events)
+    + generateEvents()
+    {abstract} +retain(event)
+    + getNumIncomingEvents()
+    + getNumOutgoingEvents()
+    + getReductionFactor()
+}
+
+class EventRegionFilter {
+    + EventRegionFilter(roi)
+    + retain()
+}
+
+class EventPolarityFilter {
+    + EventPolarityFilter(polarity)
+    + retain()
+}
+
+class EventFilterChain {
+    + addFilter(filter)
+    + retain()
+}
+
+class RefractoryPeriodFilter {
+    + RefractoryPeriodFilter(resolution, refractoryPeriod)
+    + retain()
+    + getRefractoryPeriod()
+    + setRefractoryPeriod(refractoryPeriod)
+}
+
+class EventMaskFilter {
+    + EventMaskFilter(mask)
+    + retain()
+    + getMask()
+    + setMaks(mask)
+}
+
+namespace noise {
+
+    class BackgroundActivityNoiseFilter {
+        + BackgroundActivityNoiseFilter(resolution, backgroundActivityDuration)
+        + retain()
+        + getBackgroundActivityDuration()
+        + setBackgroundActivityDuration(backgroundActivityDuration)
+    }
+
+    class FastDecayNoiseFilter {
+        + FastDecayNoiseFilter(resolution, halfLife, subdivisionFactor, noiseThreshold)
+        + retain()
+        + getNoiseThreshold()
+        + setNoiseThreshold(noiseThreshold)
+        + getHalfLife()
+        + setHalfLife(halfLife)
+    }
+
+}
+
+}
+@enduml

@@ -1,0 +1,24 @@
+Source: dv-processing
+Section: devel
+Priority: optional
+Maintainer: iniVation AG <support@inivation.com>
+Build-Depends: gcc-10, g++-10, debhelper (>=10), cmake (>= 3.22), pkg-config (>= 0.29.0), boost-inivation (>= 1.80), libopencv-dev (>= 4.2.0), libopencv-contrib-dev (>= 4.2.0), libeigen3-dev (>= 3.4.0), libcaer-dev (>= 3.3.14), libfmt-dev (>= 9.1.0), liblz4-dev, libzstd-dev, libssl-dev, python3-dev, python3-numpy
+Standards-Version: 4.0.0
+Homepage: https://gitlab.com/inivation/dv/dv-processing/
+
+Package: dv-processing
+Architecture: any
+Depends: ${misc:Depends}, cmake (>= 3.22), pkg-config (>= 0.29.0), boost-inivation (>= 1.80), libopencv-dev (>= 4.2.0), libopencv-contrib-dev (>= 4.2.0), libeigen3-dev (>= 3.4.0), libcaer-dev (>= 3.3.14), libfmt-dev (>= 9.1.0), liblz4-dev, libzstd-dev, libssl-dev
+Description: Generic algorithms for event cameras (C++ headers).
+
+Package: dv-processing-utilities
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Breaks: dv-runtime (<< 1.5.3~internal)
+Replaces: dv-runtime (<< 1.5.3~internal)
+Description: Generic algorithms for event cameras (CLI utilities).
+
+Package: dv-processing-python
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, python3, python3-numpy
+Description: Generic algorithms for event cameras (Python bindings).

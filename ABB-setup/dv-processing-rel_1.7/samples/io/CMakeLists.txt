@@ -1,0 +1,6 @@
+ADD_SUBDIRECTORY(aedat4-player)
+ADD_SUBDIRECTORY(camera-capture)
+ADD_SUBDIRECTORY(mono-live-writer)
+ADD_SUBDIRECTORY(multi-stream-slicing)
+ADD_SUBDIRECTORY(stereo-capture)
+ADD_SUBDIRECTORY(stereo-live-writer)

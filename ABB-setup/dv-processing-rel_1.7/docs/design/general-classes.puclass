@@ -1,0 +1,72 @@
+@startuml
+
+Transformation *-- Transformer
+Transformer *-- MotionCompensator
+EventStore *-- MotionCompensator
+PixelMotionPredictor *-- MotionCompensator
+
+class StampedMat {
+    + _timestamp: int64
+    + image: cv::Mat
+}
+
+class StampedPyramid {
+    + _timestamp: int64
+    + image: std::vector<cv::Mat>
+}
+
+class EventStore {
+    + sliceBackward(end: int64, size: size_t): EventStore
+}
+
+class EventPixelAccumulator {
+    # increment: uint8
+    # minimum: uint8
+    # maximum: uint8
+    # initial: uint8
+    + accumulate(events: EventStore): cv::Mat
+    + accumulateInPlace(events: EventStore, image: cv::Mat)
+}
+
+class Transformation {
+    + _T: Eigen::Matrix4f
+    # referenceFrame: std::string
+    # _timestamp: int64
+    + transformPoint(point: cv::Point3f): cv::Point3f
+    + rotatePoint(point: cv::Point3f): cv::Point3f
+    + transformPoint(point: Eigen::Vector3f): Eigen::Vector3f
+    + rotatePoint(point: Eigen::Vector3f): Eigen::Vector3f
+    + operator*(other: Transformation): Transformation
+    + translation(): Eigen::Vector3f
+    + rotationMatrix(): Eigen::Matrix3f
+    + quaternion(): Eigen::Quaternion<float>
+
+}
+
+class Transformer {
+    # transforms: boost::circular_buffer<Transformation>
+    + getTransforms(start: int64, end: int64): Transformer
+    + interpolateTransform(_timestamp: int64): Transformation
+    + resampleTransforms(start: int64, end: int64, period: int64): Transformer
+}
+
+interface PixelMotionPredictor {
+    # calibrationMatrix: cv::Matrix3f
+    + predictEvents(events: EventStore, deltaT: Transformation): EventStore
+    + predictPoint(events: std::vector<cv::Point2f>, deltaT: Transformation): std::vector<cv::Point2f>
+    + predictKeypoints(events: std::vector<cv::KeyPoint>, deltaT: Transformation): std::vector<cv::KeyPoint>
+}
+
+class MotionInducedHomographyPredictor << PixelMotionPredictor >> {}
+
+class ReprojectionPredictor << PixelMotionPredictor >> {}
+
+class MotionCompensator {
+    # events: EventStore
+    # accumulator: EventPixelAccumulator
+    # predictor: PixelMotionPredictor
+    + addEvents(events: EventStore)
+    + getFrameAtTime(_timestamp: int64): StampedMat
+}
+
+@enduml

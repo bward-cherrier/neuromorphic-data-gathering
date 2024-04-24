@@ -1,0 +1,61 @@
+<?xml version="1.0"?>
+<opencv_storage>
+    <DVXplorer_DXA00080>
+        <camera_matrix type_id="opencv-matrix">
+            <rows>3</rows>
+            <cols>3</cols>
+            <dt>d</dt>
+            <data>
+                5.3651443530954350e+02 0. 2.8093701336476857e+02 0.
+                5.3761720357602508e+02 2.5147374621790536e+02 0. 0. 1.
+            </data>
+        </camera_matrix>
+        <distortion_coefficients type_id="opencv-matrix">
+            <rows>1</rows>
+            <cols>4</cols>
+            <dt>d</dt>
+            <data>
+                -3.8148468196826740e-01 1.8108739049947217e-01
+                7.3106567671802323e-04 1.1827526608579420e-03
+            </data>
+        </distortion_coefficients>
+        <image_width>640</image_width>
+        <image_height>480</image_height>
+    </DVXplorer_DXA00080>
+    <use_fisheye_model>0</use_fisheye_model>
+    <type>camera</type>
+    <pattern_width>6</pattern_width>
+    <pattern_height>6</pattern_height>
+    <pattern_type>aprilTag</pattern_type>
+    <board_width>6</board_width>
+    <board_height>6</board_height>
+    <square_size>0.03</square_size>
+    <calibration_error>N/A</calibration_error>
+    <calibration_time>"Mi 08 Sep 2021 10:54:37"</calibration_time>
+    <calibration_converged>0</calibration_converged>
+    <time_offset_cam_imu>2.8970119666391278e-03</time_offset_cam_imu>
+    <transformation_cam_imu type_id="opencv-matrix">
+        <rows>4</rows>
+        <cols>4</cols>
+        <dt>d</dt>
+        <data>
+            9.5419146139933220e-01 4.3230590996881452e-02
+            -2.9605704010319861e-01 -5.9582903197409977e-02
+            -6.2844652850097132e-03 9.9218400864591705e-01
+            1.2462503152818123e-01 -8.8661431748237422e-03
+            2.9913067460340487e-01 -1.1705558076990182e-01
+            9.4700519033526565e-01 -6.3389708442018577e-02 0. 0. 0. 1.
+        </data>
+    </transformation_cam_imu>
+    <mean_reprojection_error>3.2320843007736504e+00</mean_reprojection_error>
+    <mean_accelerometer_error>4.7818470209579994e-01</mean_accelerometer_error>
+    <mean_gyroscope_error>7.4215233124661009e-02</mean_gyroscope_error>
+    <intrinsic_calibration_reprojection_error type_id="opencv-matrix">
+        <rows>2</rows>
+        <cols>1</cols>
+        <dt>d</dt>
+        <data>
+            3.0635211315936578e-07 -2.1486643279067896e-07
+        </data>
+    </intrinsic_calibration_reprojection_error>
+</opencv_storage>

@@ -1,0 +1,171 @@
+<dv version="2.0">
+    <node name="" path="/">
+        <node name="mainloop" path="/mainloop/">
+            <attr key="_guiSupport" type="string">{"lastDeployedHash":"9aff3c4ba68170416a2987d1415dac9faf8c8431"}</attr>
+            <node name="capture" path="/mainloop/capture/">
+                <attr key="_guiSupport" type="string">{"boxX":650.0,"boxY":50.0}</attr>
+                <attr key="_priorityAttributes" type="string">file,loop</attr>
+                <attr key="file" type="string">test_files/sample_data.aedat4</attr>
+                <attr key="logLevel" type="string">INFO</attr>
+                <attr key="loop" type="bool">true</attr>
+                <attr key="mode" type="string">timeInterval</attr>
+                <attr key="moduleLibrary" type="string">dv_input_file</attr>
+                <attr key="pause" type="bool">false</attr>
+                <attr key="running" type="bool">false</attr>
+                <attr key="seek" type="long">0</attr>
+                <attr key="seekEnd" type="long">9223372036854775807</attr>
+                <attr key="seekStart" type="long">0</attr>
+                <attr key="timeDelay" type="long">10000</attr>
+                <attr key="timeInterval" type="long">100</attr>
+            </node>
+            <node name="output_net_socket" path="/mainloop/output_net_socket/">
+                <attr key="_guiSupport" type="string">{"boxX":700.0,"boxY":250.0}</attr>
+                <attr key="_priorityAttributes" type="string">compression,socketPath</attr>
+                <attr key="compression" type="string">NONE</attr>
+                <attr key="logLevel" type="string">INFO</attr>
+                <attr key="maxConcurrentConnections" type="int">10</attr>
+                <attr key="maxConnectionsBacklog" type="int">5</attr>
+                <attr key="maxDataBacklog" type="int">5</attr>
+                <attr key="moduleLibrary" type="string">dv_output_net_socket</attr>
+                <attr key="running" type="bool">true</attr>
+                <attr key="socketPath" type="string">/tmp/dv-runtime-events.sock</attr>
+                <attr key="timeout" type="long">0</attr>
+                <node name="inputs" path="/mainloop/output_net_socket/inputs/">
+                    <node name="output0" path="/mainloop/output_net_socket/inputs/output0/">
+                        <attr key="from" type="string">capture[events]</attr>
+                    </node>
+                </node>
+            </node>
+            <node name="output_net_socket_2" path="/mainloop/output_net_socket_2/">
+                <attr key="_guiSupport" type="string">{"boxX":850.0,"boxY":400.0}</attr>
+                <attr key="_priorityAttributes" type="string">compression,socketPath</attr>
+                <attr key="compression" type="string">NONE</attr>
+                <attr key="logLevel" type="string">INFO</attr>
+                <attr key="maxConcurrentConnections" type="int">10</attr>
+                <attr key="maxConnectionsBacklog" type="int">5</attr>
+                <attr key="maxDataBacklog" type="int">5</attr>
+                <attr key="moduleLibrary" type="string">dv_output_net_socket</attr>
+                <attr key="running" type="bool">true</attr>
+                <attr key="socketPath" type="string">/tmp/dv-runtime-frames.sock</attr>
+                <attr key="timeout" type="long">0</attr>
+                <node name="inputs" path="/mainloop/output_net_socket_2/inputs/">
+                    <node name="output0" path="/mainloop/output_net_socket_2/inputs/output0/">
+                        <attr key="from" type="string">capture[frames]</attr>
+                    </node>
+                </node>
+            </node>
+            <node name="output_net_socket_3" path="/mainloop/output_net_socket_3/">
+                <attr key="_guiSupport" type="string">{"boxX":1000.0,"boxY":250.0}</attr>
+                <attr key="_priorityAttributes" type="string">compression,socketPath</attr>
+                <attr key="compression" type="string">NONE</attr>
+                <attr key="logLevel" type="string">INFO</attr>
+                <attr key="maxConcurrentConnections" type="int">10</attr>
+                <attr key="maxConnectionsBacklog" type="int">5</attr>
+                <attr key="maxDataBacklog" type="int">5</attr>
+                <attr key="moduleLibrary" type="string">dv_output_net_socket</attr>
+                <attr key="running" type="bool">true</attr>
+                <attr key="socketPath" type="string">/tmp/dv-runtime-imu.sock</attr>
+                <attr key="timeout" type="long">0</attr>
+                <node name="inputs" path="/mainloop/output_net_socket_3/inputs/">
+                    <node name="output0" path="/mainloop/output_net_socket_3/inputs/output0/">
+                        <attr key="from" type="string">capture[imu]</attr>
+                    </node>
+                </node>
+            </node>
+            <node name="output_net_socket_4" path="/mainloop/output_net_socket_4/">
+                <attr key="_guiSupport" type="string">{"boxX":1150.0,"boxY":400.0}</attr>
+                <attr key="_priorityAttributes" type="string">compression,socketPath</attr>
+                <attr key="compression" type="string">NONE</attr>
+                <attr key="logLevel" type="string">INFO</attr>
+                <attr key="maxConcurrentConnections" type="int">10</attr>
+                <attr key="maxConnectionsBacklog" type="int">5</attr>
+                <attr key="maxDataBacklog" type="int">5</attr>
+                <attr key="moduleLibrary" type="string">dv_output_net_socket</attr>
+                <attr key="running" type="bool">true</attr>
+                <attr key="socketPath" type="string">/tmp/dv-runtime-triggers.sock</attr>
+                <attr key="timeout" type="long">0</attr>
+                <node name="inputs" path="/mainloop/output_net_socket_4/inputs/">
+                    <node name="output0" path="/mainloop/output_net_socket_4/inputs/output0/">
+                        <attr key="from" type="string">capture[triggers]</attr>
+                    </node>
+                </node>
+            </node>
+            <node name="output_net_tcp_server" path="/mainloop/output_net_tcp_server/">
+                <attr key="_guiSupport" type="string">{"boxX":100.0,"boxY":250.0}</attr>
+                <attr key="_priorityAttributes" type="string">compression,ipAddress,portNumber</attr>
+                <attr key="compression" type="string">NONE</attr>
+                <attr key="ipAddress" type="string">127.0.0.1</attr>
+                <attr key="logLevel" type="string">INFO</attr>
+                <attr key="maxConcurrentConnections" type="int">10</attr>
+                <attr key="maxConnectionsBacklog" type="int">5</attr>
+                <attr key="maxDataBacklog" type="int">5</attr>
+                <attr key="moduleLibrary" type="string">dv_output_net_tcp_server</attr>
+                <attr key="portNumber" type="int">50101</attr>
+                <attr key="running" type="bool">true</attr>
+                <attr key="timeout" type="long">0</attr>
+                <node name="inputs" path="/mainloop/output_net_tcp_server/inputs/">
+                    <node name="output0" path="/mainloop/output_net_tcp_server/inputs/output0/">
+                        <attr key="from" type="string">capture[events]</attr>
+                    </node>
+                </node>
+            </node>
+            <node name="output_net_tcp_server_2" path="/mainloop/output_net_tcp_server_2/">
+                <attr key="_guiSupport" type="string">{"boxX":250.0,"boxY":400.0}</attr>
+                <attr key="_priorityAttributes" type="string">compression,ipAddress,portNumber</attr>
+                <attr key="compression" type="string">NONE</attr>
+                <attr key="ipAddress" type="string">127.0.0.1</attr>
+                <attr key="logLevel" type="string">INFO</attr>
+                <attr key="maxConcurrentConnections" type="int">10</attr>
+                <attr key="maxConnectionsBacklog" type="int">5</attr>
+                <attr key="maxDataBacklog" type="int">5</attr>
+                <attr key="moduleLibrary" type="string">dv_output_net_tcp_server</attr>
+                <attr key="portNumber" type="int">50102</attr>
+                <attr key="running" type="bool">true</attr>
+                <attr key="timeout" type="long">0</attr>
+                <node name="inputs" path="/mainloop/output_net_tcp_server_2/inputs/">
+                    <node name="output0" path="/mainloop/output_net_tcp_server_2/inputs/output0/">
+                        <attr key="from" type="string">capture[frames]</attr>
+                    </node>
+                </node>
+            </node>
+            <node name="output_net_tcp_server_3" path="/mainloop/output_net_tcp_server_3/">
+                <attr key="_guiSupport" type="string">{"boxX":400.0,"boxY":250.0}</attr>
+                <attr key="_priorityAttributes" type="string">compression,ipAddress,portNumber</attr>
+                <attr key="compression" type="string">NONE</attr>
+                <attr key="ipAddress" type="string">127.0.0.1</attr>
+                <attr key="logLevel" type="string">INFO</attr>
+                <attr key="maxConcurrentConnections" type="int">10</attr>
+                <attr key="maxConnectionsBacklog" type="int">5</attr>
+                <attr key="maxDataBacklog" type="int">5</attr>
+                <attr key="moduleLibrary" type="string">dv_output_net_tcp_server</attr>
+                <attr key="portNumber" type="int">50103</attr>
+                <attr key="running" type="bool">true</attr>
+                <attr key="timeout" type="long">0</attr>
+                <node name="inputs" path="/mainloop/output_net_tcp_server_3/inputs/">
+                    <node name="output0" path="/mainloop/output_net_tcp_server_3/inputs/output0/">
+                        <attr key="from" type="string">capture[imu]</attr>
+                    </node>
+                </node>
+            </node>
+            <node name="output_net_tcp_server_4" path="/mainloop/output_net_tcp_server_4/">
+                <attr key="_guiSupport" type="string">{"boxX":550.0,"boxY":400.0}</attr>
+                <attr key="_priorityAttributes" type="string">compression,ipAddress,portNumber</attr>
+                <attr key="compression" type="string">NONE</attr>
+                <attr key="ipAddress" type="string">127.0.0.1</attr>
+                <attr key="logLevel" type="string">INFO</attr>
+                <attr key="maxConcurrentConnections" type="int">10</attr>
+                <attr key="maxConnectionsBacklog" type="int">5</attr>
+                <attr key="maxDataBacklog" type="int">5</attr>
+                <attr key="moduleLibrary" type="string">dv_output_net_tcp_server</attr>
+                <attr key="portNumber" type="int">50104</attr>
+                <attr key="running" type="bool">true</attr>
+                <attr key="timeout" type="long">0</attr>
+                <node name="inputs" path="/mainloop/output_net_tcp_server_4/inputs/">
+                    <node name="output0" path="/mainloop/output_net_tcp_server_4/inputs/output0/">
+                        <attr key="from" type="string">capture[triggers]</attr>
+                    </node>
+                </node>
+            </node>
+        </node>
+    </node>
+</dv>

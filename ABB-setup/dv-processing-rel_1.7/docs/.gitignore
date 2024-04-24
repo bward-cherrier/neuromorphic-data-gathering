@@ -1,0 +1,5 @@
+doxy-html/
+doxy-xml/
+sphinx-build/
+build/
+source/version.py

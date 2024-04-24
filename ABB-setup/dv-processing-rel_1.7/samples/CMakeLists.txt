@@ -1,0 +1,7 @@
+ADD_SUBDIRECTORY(io)
+ADD_SUBDIRECTORY(noise)
+ADD_SUBDIRECTORY(motion-compensation)
+ADD_SUBDIRECTORY(visualization)
+ADD_SUBDIRECTORY(depth)
+ADD_SUBDIRECTORY(clustering)
+ADD_SUBDIRECTORY(features)

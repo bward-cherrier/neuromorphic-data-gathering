@@ -1,0 +1,29 @@
+native_include "cvector.hpp";
+native_include "cstring.hpp";
+
+file_identifier "BBOX";
+
+namespace dv;
+
+table BoundingBox {
+	/// Timestamp (µs).
+	timestamp: int64;
+	/// top left corner of bounding box x-coordinate.
+	topLeftX: float;
+	/// top left corner of bounding box y-coordinate.
+	topLeftY: float;
+	/// bottom right corner of bounding box x-coordinate.
+	bottomRightX: float;
+	/// bottom right corner of bounding box y-coordinate.
+	bottomRightY: float;
+	/// confidence of the given bounding box.
+	confidence: float;
+	/// Label for the given bounding box
+	label: string;
+}
+
+table BoundingBoxPacket {
+	elements: [BoundingBox] (native_inline);
+}
+
+root_type BoundingBoxPacket;

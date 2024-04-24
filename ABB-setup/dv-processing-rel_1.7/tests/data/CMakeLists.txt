@@ -1,0 +1,10 @@
+FILE(COPY test_files DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+
+DV_ADD_TEST(timed-keypoint)
+DV_ADD_TEST(depth-event)
+DV_ADD_TEST(depth-frame)
+DV_ADD_TEST(pose)
+DV_ADD_TEST(frame)
+DV_ADD_TEST(imu)
+DV_ADD_TEST(cstring)
+DV_ADD_TEST(generate CLI11::CLI11)

@@ -1,0 +1,24 @@
+native_include "cvector.hpp";
+
+file_identifier "DEVT";
+
+namespace dv;
+
+struct DepthEvent {
+	/// Timestamp (µs).
+	timestamp: int64;
+	// X coordinate of event.
+	x: int16;
+	// Y coordinate of event.
+	y: int16;
+	// Change polarity (1=ON/0=OFF).
+	polarity: bool;
+	// Depth value.
+	depth: uint16 = 0;
+}
+
+table DepthEventPacket {
+	elements: [DepthEvent] (native_inline);
+}
+
+root_type DepthEventPacket;
