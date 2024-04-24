@@ -21,6 +21,8 @@ You can find source code from these links:
 
 --------------------------------------------------------
 
+Composition
+
 * ABB-setup
 
 1. common_robot_interface: Used to control ABB and dobot.
