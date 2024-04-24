@@ -8,7 +8,7 @@ This repository contains a shell script, which is used to automatically configur
 
 Procedures:
 
-1, Download CRI and Sinabs files.
+1, Download CRI and Sinabs files. (You can find them in this Github repository or use links below)
 
   CRI link: https://github.com/dexterousrobot/common_robot_interface
   
@@ -22,7 +22,7 @@ Procedures:
 
 3, Run the bash file:
 
-    "PATH_OF_THE_FILE/dobot_env_config.sh"
+    "PATH_OF_THE_FILE/dobot_env_config-vx.x.sh"
 
 Notes:
 
