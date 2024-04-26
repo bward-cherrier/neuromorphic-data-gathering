@@ -19,7 +19,7 @@ sensor_type = 'NeuroTac_DVXplorer' # NeuroTac version. Options: 'NeuroTac_DVXplo
 r_bias = 0.5
 def make_meta(robot_tcp = [0, 0, 59, 0, 0, 0], # Size of the TacTip (tcp = tool center point)
               base_frame = [0, 0, 0, 0, 0, 0], # Origin of the base frame is at centre of the ABB robot base0
-              home_pose = [400, 0, 240, 180, 0, 180], # Starting point of the robot when switched on
+              home_pose = [400, 0, 340, 180, 0, 180], # Starting point of the robot when switched on
               work_frame = [446, -78, 308.5, 180, 0, 180], # Starting point and reference frame for this experiment 
               linear_speed = 10, # Robot's speed for linear movements
               angular_speed = 20, # Robot's speed for rotation movements
@@ -69,7 +69,7 @@ def collect_data(collect_dir, video_dir, events_dir, tap_move, obj_poses, home_p
 
       # Move to origin of work frame
       print("Moving to origin of work frame ...")
-      robot.linear_speed = 100
+      robot.linear_speed = 10
       robot.coord_frame = work_frame
       robot.move_linear((0, 0, 0, 0, 0, 0))
       robot.linear_speed = linear_speed

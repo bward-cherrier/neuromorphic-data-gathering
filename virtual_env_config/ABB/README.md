@@ -22,6 +22,10 @@ Procedures:
     
 3, Create an empty folder to store all your future data.
 
+4, cd to your bash file folder:
+
+    e.g. cd /home/user/Robots-Sensors/virtual_env_config/
+
 4, Run the bash file:
 
     "PATH_OF_THE_FILE/ABB_env_config-v0.1.sh"
