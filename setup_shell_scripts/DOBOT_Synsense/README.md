@@ -1,6 +1,6 @@
 Author: XXC
 
-Data: 2024/04/23
+Data: 2024/04/26
 
 Note: Always use the latest version!
 
@@ -12,7 +12,7 @@ Procedures:
 
 2, cd to your goal shell folder
 
-    e.g. cd /home/user/Robots-Sensors/setup_shell_scripts/ABB_NeuroTac
+    e.g. cd /home/user/Robots-Sensors/setup_shell_scripts/DOBOT_Synsense
 
    Set the mode of this bash file to executive: 
    
@@ -20,7 +20,7 @@ Procedures:
 
 3, Run the bash file:
 
-    PATH_OF_THE_FILE/dobot_env_config-vx.x.sh
+    PATH_OF_THE_FILE/DOBOT_Synsense_config-vx.x.sh
     
 4, Change the TCP address and select the right port.
 

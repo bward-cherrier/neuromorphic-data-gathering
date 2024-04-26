@@ -53,4 +53,4 @@ You can find source code from these links (For stablization purpose, try to use 
 
 	e.g. cd /home/user/Robots-Sensors/setup_shell_scripts/ABB_NeuroTac
 
-3. Read "Readme.md" file in the shell scripts folder.
+3. Read "Readme.md" file in the shell scripts folder for the next detailed instruction.

@@ -1,6 +1,6 @@
 Author: XXC
 
-Data: 2024/04/24
+Data: 2024/04/26
 
 Note: Always use the latest version!!!
 
@@ -22,7 +22,7 @@ Procedures:
 
 4, Run the bash file:
 
-    PATH_OF_THE_FILE/ABB_env_config-v0.1.sh
+    PATH_OF_THE_FILE/ABB_NeuroTac_config-v0.1.sh
 
 Notes:
 
