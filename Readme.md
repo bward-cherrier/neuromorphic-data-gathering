@@ -39,9 +39,9 @@ You can find source code from these links (For stablization purpose, try to use 
 
 * setup_shell_scripts (shell scripts to automatically set up robot and sensor env):
 
-    1. ABB_NeuroTac: To configure ABB and NeuroTac env.
+    - ABB_NeuroTac: To configure ABB and NeuroTac env.
 
-    2. dobot_synsense: To configure dobot and synsense env.
+    - dobot_synsense: To configure dobot and synsense env.
 
 --------------------------------------------------------
 
@@ -51,6 +51,6 @@ You can find source code from these links (For stablization purpose, try to use 
 
 2. cd to your goal shell folder
 
-e.g. cd /home/user/Robots-Sensors/setup_shell_scripts/ABB_NeuroTac
+	e.g. cd /home/user/Robots-Sensors/setup_shell_scripts/ABB_NeuroTac
 
 3. Read "Readme.md" file in the shell scripts folder.

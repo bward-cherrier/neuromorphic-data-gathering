@@ -16,11 +16,11 @@ Procedures:
 
    Set the mode of this bash file to executive: 
    
-    "chmod +x PATH_OF_THE_FILE"
+    chmod +x PATH_OF_THE_FILE
 
 3, Run the bash file:
 
-    "PATH_OF_THE_FILE/dobot_env_config-vx.x.sh"
+    PATH_OF_THE_FILE/dobot_env_config-vx.x.sh
     
 4, Change the TCP address and select the right port.
 
