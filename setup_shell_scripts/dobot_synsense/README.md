@@ -8,13 +8,11 @@ This repository contains a shell script, which is used to automatically configur
 
 Procedures:
 
-1, Download CRI and Sinabs files. (You can find them in this Github repository or use links below)
+1, Download or Git clone this repo to your desired path (e.g. /home/user/Robots-Sensors).
 
-  CRI link: https://github.com/dexterousrobot/common_robot_interface
-  
-  Sinabs link: https://github.com/synsense/sinabs
+2, cd to your goal shell folder
 
-2, Download this shell scipt file.
+    e.g. cd /home/user/Robots-Sensors/setup_shell_scripts/ABB_NeuroTac
 
    Set the mode of this bash file to executive: 
    
@@ -23,6 +21,8 @@ Procedures:
 3, Run the bash file:
 
     "PATH_OF_THE_FILE/dobot_env_config-vx.x.sh"
+    
+4, Change the TCP address and select the right port.
 
 Notes:
 

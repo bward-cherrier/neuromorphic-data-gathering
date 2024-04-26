@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ######################## Note! #############################
-# Author: XXC		Data: 2024/04/24 ###################
+# Author: XXC		Data: 2024/04/26 ###################
 ############################################################
 
 ###################### Modification ########################
@@ -21,8 +21,8 @@ PYTHON_VERSION=${PYTHON_VERSION:-'3.8'}
 
 cd ../../
 current_dir=$(pwd)
-CRI_PATH="$current_dir/ABB-setup/common_robot_interface"
-TCN_PATH="$current_dir/ABB-setup/tactile-core-neuro"
+CRI_PATH="$current_dir/source_code/ABB-setup/common_robot_interface"
+TCN_PATH="$current_dir/source_code/ABB-setup/tactile-core-neuro"
 
 default_data_dir=$HOME/Data
 echo "Please input your data path (or press Enter to use the default path: $default_data_dir):"
@@ -95,6 +95,7 @@ echo "#############################################"
 config_file="$HOME/.bashrc"
 echo "export PYTHONPATH=\"$TCN_PATH/python:\$PYTHONPATH\"" >> $config_file
 echo "export DATAPATH=\"$DATA_PATH\"" >> $config_file
+source $config_file
 
 echo "Added $TCN_PATH and the Core folder to PYTHONPATH in the $ENV_NAME environment."
 

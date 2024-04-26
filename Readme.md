@@ -2,6 +2,8 @@
 
 Author: XXC
 
+Contributor: Ben
+
 Data: 2024/04/24
 
 Note: Always use the latest version!
@@ -11,7 +13,7 @@ This folder contains code for robots, sensors and environment configuration.
 --------------------------------------------------------
 ## Acknowledgement
 
-You can find source code from these links:
+You can find source code from these links (For stablization purpose, try to use libs from source_code folder):
 
 1. CRI: https://github.com/dexterousrobot/common_robot_interface
 
@@ -23,18 +25,32 @@ You can find source code from these links:
 
 ## Composition
 
-* ABB-setup
+* source_code: source code for controlling robots and sensors
 
-1. common_robot_interface: Used to control ABB and dobot.
+    -  ABB-setup
 
-2. tactile-core-neuro: Used to collect NeuroTac data.
+        1. common_robot_interface: Used to control ABB and dobot.
 
-* sinabs
+        2. tactile-core-neuro: Used to collect NeuroTac data.
 
-1. Stable sinabs version.
+    - sinabs
 
-* virtual_env_config
+        1. Stable sinabs version.
 
-1. ABB: To configure ABB env.
+* setup_shell_scripts (shell scripts to automatically set up robot and sensor env):
 
-2. dobot&synsense: To configure dobot and synsense env.
+    1. ABB_NeuroTac: To configure ABB and NeuroTac env.
+
+    2. dobot_synsense: To configure dobot and synsense env.
+
+--------------------------------------------------------
+
+## Guidence
+
+1. Download or Git clone this repo to your desired path (e.g. /home/user/Robots-Sensors).
+
+2. cd to your goal shell folder
+
+e.g. cd /home/user/Robots-Sensors/setup_shell_scripts/ABB_NeuroTac
+
+3. Read "Readme.md" file in the shell scripts folder.
