@@ -7,10 +7,12 @@
 
 # User info input
 echo "Current time: `date`"
-echo "Please input your virtual environment name (e.g. ABB_env):"
+echo "Please input your virtual environment name (press Enter to use default name: abb_env):"
 read ENV_NAME
+ENV_NAME=${ENV_NAME:-'abb_env'}
 echo "Please input your Python interpreter version (e.g. 3.8):"
 read PYTHON_VERSION
+PYTHON_VERSION=${PYTHON_VERSION:-'3.8'}
 echo "Please input your common_robot_interface (CRI) folder path (e.g. "/home/user/common_robot_interface"):"
 read CRI_PATH
 echo "Please input your tactile-core-neuro folder path (e.g. "/home/user/tactile-core-neuro"):"
@@ -61,7 +63,7 @@ source activate $ENV_NAME
 
 # Install dependent libs
 echo "Installing dependent libraries."
-pip install numpy opencv-python PyQt5 Pyro5
+pip install numpy opencv-python PyQt5 Pyro5 h5py
 
 # Enter CRI folder and install it
 echo -e "\n"
