@@ -4,25 +4,20 @@
 # Author: XXC		Data: 2024/04/26 ###################
 ############################################################
 
-###################### Modification ########################
-# 1. Change path to default. User just need to press Enter to use default one.
-# 2. install h5py lib.
-# 3. Get rid of user-wide installation in CRI
-############################################################
 
 # User info input
 echo "Current time: `date`"
-echo "Please input your virtual environment name (or press Enter to use default name: abb_env):"
+echo "Please input your virtual environment name (or press Enter to use default name: neurotac):"
 read ENV_NAME
-ENV_NAME=${ENV_NAME:-'abb_env'}
+ENV_NAME=${ENV_NAME:-'neurotac'}
 echo "Please input your Python interpreter version (or press Enter to use default version: 3.8):"
 read PYTHON_VERSION
 PYTHON_VERSION=${PYTHON_VERSION:-'3.8'}
 
 cd ../../
 current_dir=$(pwd)
-CRI_PATH="$current_dir/source_code/ABB-setup/common_robot_interface"
-TCN_PATH="$current_dir/source_code/ABB-setup/tactile-core-neuro"
+CRI_PATH="$current_dir/source_code/common_robot_interface"
+TCN_PATH="$current_dir/source_code/tactile-core-neuro"
 
 default_data_dir=$HOME/Data
 echo "Please input your data path (or press Enter to use the default path: $default_data_dir):"
@@ -107,7 +102,7 @@ echo "#############################################"
 
 pip install dv-processing dv
 
-echo -e "\nABB environment is successfully set up!"
+echo -e "\nNeurotac environment is successfully set up!"
 
 
 

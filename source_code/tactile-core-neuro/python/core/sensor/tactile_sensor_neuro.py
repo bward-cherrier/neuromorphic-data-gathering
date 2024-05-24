@@ -36,7 +36,7 @@ class NeuroTac:
         self.save_acc_video = save_acc_video
         self.events_on_filename = None
         self.events_off_filename = None
-        self.evetns_stream_filename = None
+        self.events_stream_filename = None
         self.events_video_filename = None
         self.acc_video_filename = None
         self.display = display
@@ -210,7 +210,7 @@ class NeuroTac:
             f.attrs['num_pos'] = np.count_nonzero(self.event_store.polarities())
             f.attrs['sensor_resolution'] = np.array(self.camera.getEventResolution(),dtype='int64')
             
-            # f.close()
+
 
     # Save captured frames
     def save_frames(self, datafile:str = None, format = 'pkl') -> None:

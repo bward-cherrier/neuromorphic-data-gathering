@@ -1,17 +1,46 @@
 #!/bin/bash
 
 ######################## Note! #############################
-# Author: XXC		Data: 2024/04/23 ###################
-# https://github.com/xxcStella/Dobot-Synsense/tree/main
+# Author: XXC		Data: 2024/04/26 ###################
 ############################################################
 
 # User editable items
-ENV_NAME=dobot_test
-PYTHON_VERSION=3.8
-CRI_PATH="/home/xxc/Miscelleneaous/common_robot_interface"
-SINABS_PATH="/home/xxc/Miscelleneaous/sinabs"
+echo "Current time: `date`"
+echo "Please input your virtual environment name (or press Enter to use default name: Specktac):"
+read ENV_NAME
+ENV_NAME=${ENV_NAME:-'Specktac'}
+echo "Please input your Python interpreter version (or press Enter to use default version: 3.8):"
+read PYTHON_VERSION
+PYTHON_VERSION=${PYTHON_VERSION:-'3.8'}
+
+cd ../../
+current_dir=$(pwd)
+CRI_PATH="$current_dir/source_code/common_robot_interface"
+SINABS_PATH="$current_dir/source_code/sinabs"
+
+echo -e "\n"
+printf "%-28s %-25s\n" "Virtual environment name:" 	$ENV_NAME
+printf "%-28s %-25s\n" "Python version:"		$PYTHON_VERSION
+printf "%-28s %-25s\n" "CRI folder path:"		$CRI_PATH
+printf "%-28s %-25s\n" "Sinabs folder path:"		$SINABS_PATH
+
+echo "Shall we continue? [y/n]"
+read judge
+if [ $judge = 'y' ]
+then
+   echo -e "Continue processing\n"
+elif [ $judge = 'n' ]
+then
+   echo "Stop the process"
+   exit
+else
+   echo "Wrong input!"
+   exit
+fi
+
 
 # 检查conda环境是否可用
+echo -e "\n"
 echo "##################################"
 echo "Baisc environment configuration"
 echo "##################################"
@@ -31,6 +60,7 @@ echo "Activating the virtual environment"
 source activate $ENV_NAME
 
 # 进入CRI目录并安装CRI
+echo -e "\n"
 echo "#############################################"
 echo "#### Common-robot-interface Installation ####"
 echo "#############################################"
@@ -38,9 +68,10 @@ echo "#############################################"
 echo "Changing directory to CRI folder: $CRI_PATH"
 cd $CRI_PATH
 echo "Installing CRI in current virual environment"
-pip install -e . --user
+pip install -e .
 
 # Install Samna
+echo -e "\n"
 echo "#############################################"
 echo "############ Samna Installation #############"
 echo "#############################################"
@@ -66,12 +97,13 @@ python temp_script.py
 rm temp_script.py
 
 # Install Sinabs
+echo -e "\n"
 echo "#############################################"
 echo "############ Installing Sinabs ##############"
 echo "#############################################"
 
 cd $SINABS_PATH
-pip install -e . --user
+pip install -e .
 
 # Install Sinabs-dynapcnn
 # This part is no longer required!! This lib is merged into sinabs!!
@@ -80,7 +112,7 @@ pip install -e . --user
 # echo "#############################################"
 # pip install sinabs-dynapcnn
 
-echo "Dobot and Synsense environment is successfully configured!"
+echo -e "\nSpecktac environment is successfully configured!"
 
 
 

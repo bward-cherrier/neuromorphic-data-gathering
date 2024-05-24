@@ -1,0 +1,196 @@
+<dv version="2.0">
+    <node name="mainloop" path="/mainloop/">
+        <attr key="_guiSupport" type="string">{"lastDeployedHash":"09ed1230c4653a90d6267431fe8af95f2f515b9d"}</attr>
+        <node name="_visualizer_accumulator___frames_0" path="/mainloop/_visualizer_accumulator___frames_0/">
+            <attr key="_guiSupport" type="string">{"visualizerX":12,"visualizerY":0,"size":4,"minimized":false,"boxX":150.0,"boxY":400.0}</attr>
+            <attr key="_priorityAttributes" type="string">compression,ipAddress,portNumber</attr>
+            <attr key="compression" type="string">NONE</attr>
+            <attr key="ipAddress" type="string">127.0.0.1</attr>
+            <attr key="logLevel" type="string">INFO</attr>
+            <attr key="maxConcurrentConnections" type="int">10</attr>
+            <attr key="maxConnectionsBacklog" type="int">5</attr>
+            <attr key="maxDataBacklog" type="int">5</attr>
+            <attr key="moduleLibrary" type="string">dv_output_net_tcp_server</attr>
+            <attr key="portNumber" type="int">60768</attr>
+            <attr key="running" type="bool">true</attr>
+            <attr key="timeout" type="long">0</attr>
+            <node name="inputs" path="/mainloop/_visualizer_accumulator___frames_0/inputs/">
+                <node name="output0" path="/mainloop/_visualizer_accumulator___frames_0/inputs/output0/">
+                    <attr key="from" type="string">accumulator[frames]</attr>
+                </node>
+            </node>
+        </node>
+        <node name="_visualizer_noiseFilter___events_0" path="/mainloop/_visualizer_noiseFilter___events_0/">
+            <attr key="_guiSupport" type="string">{"visualizerX":0,"visualizerY":0,"size":12,"minimized":false,"boxX":150.0,"boxY":400.0}</attr>
+            <attr key="_priorityAttributes" type="string">compression,ipAddress,portNumber</attr>
+            <attr key="compression" type="string">NONE</attr>
+            <attr key="ipAddress" type="string">127.0.0.1</attr>
+            <attr key="logLevel" type="string">INFO</attr>
+            <attr key="maxConcurrentConnections" type="int">10</attr>
+            <attr key="maxConnectionsBacklog" type="int">5</attr>
+            <attr key="maxDataBacklog" type="int">5</attr>
+            <attr key="moduleLibrary" type="string">dv_output_net_tcp_server</attr>
+            <attr key="portNumber" type="int">60769</attr>
+            <attr key="running" type="bool">true</attr>
+            <attr key="timeout" type="long">0</attr>
+            <node name="inputs" path="/mainloop/_visualizer_noiseFilter___events_0/inputs/">
+                <node name="output0" path="/mainloop/_visualizer_noiseFilter___events_0/inputs/output0/">
+                    <attr key="from" type="string">noiseFilter[events]</attr>
+                </node>
+            </node>
+        </node>
+        <node name="accumulator" path="/mainloop/accumulator/">
+            <attr key="_guiSupport" type="string">{"boxX":0.0,"boxY":200.0}</attr>
+            <attr key="_priorityAttributes" type="string">accumulationTime</attr>
+            <attr key="accumulationNumber" type="int">100000</attr>
+            <attr key="accumulationTime" type="int">33</attr>
+            <attr key="colorDemosaicing" type="bool">false</attr>
+            <attr key="decayFunction" type="string">Exponential</attr>
+            <attr key="decayParam" type="double">1000000.0</attr>
+            <attr key="eventContribution" type="float">0.04</attr>
+            <attr key="logLevel" type="string">INFO</attr>
+            <attr key="maxPotential" type="float">0.3</attr>
+            <attr key="minPotential" type="float">0.0</attr>
+            <attr key="moduleLibrary" type="string">dv_accumulator</attr>
+            <attr key="neutralPotential" type="float">0.0</attr>
+            <attr key="rectifyPolarity" type="bool">false</attr>
+            <attr key="running" type="bool">true</attr>
+            <attr key="sliceMethod" type="string">TIME</attr>
+            <attr key="synchronousDecay" type="bool">false</attr>
+            <node name="inputs" path="/mainloop/accumulator/inputs/">
+                <node name="events" path="/mainloop/accumulator/inputs/events/">
+                    <attr key="from" type="string">dvxplorer[events]</attr>
+                </node>
+            </node>
+        </node>
+        <node name="dvxplorer" path="/mainloop/dvxplorer/">
+            <attr key="_guiSupport" type="string">{"boxX":250.0,"boxY":50.0}</attr>
+            <attr key="_priorityAttributes" type="string">biasSensitivity</attr>
+            <attr key="biasSensitivity" type="string">Default</attr>
+            <attr key="busNumber" type="int">0</attr>
+            <attr key="devAddress" type="int">0</attr>
+            <attr key="externalTriggerMode" type="string">Reset Timestamps</attr>
+            <attr key="logLevel" type="string">WARNING</attr>
+            <attr key="moduleLibrary" type="string">dv_dvxplorer</attr>
+            <attr key="running" type="bool">true</attr>
+            <attr key="serialNumber" type="string"/>
+            <node name="activityMonitor" path="/mainloop/dvxplorer/activityMonitor/">
+                <attr key="DecrementRate" type="int">1</attr>
+                <attr key="DecrementTime" type="int">3</attr>
+                <attr key="Enable" type="bool">false</attr>
+                <attr key="NegativeThreshold" type="int">20</attr>
+                <attr key="PositiveMaxValue" type="int">300</attr>
+                <attr key="PositiveThreshold" type="int">300</attr>
+                <attr key="_priorityAttributes" type="string"/>
+            </node>
+            <node name="crop" path="/mainloop/dvxplorer/crop/">
+                <attr key="Enable" type="bool">false</attr>
+                <attr key="EndX" type="int">639</attr>
+                <attr key="EndY" type="int">479</attr>
+                <attr key="StartX" type="int">0</attr>
+                <attr key="StartY" type="int">0</attr>
+                <attr key="_priorityAttributes" type="string"/>
+            </node>
+            <node name="externalInput" path="/mainloop/dvxplorer/externalInput/">
+                <attr key="DetectFallingEdges" type="bool">false</attr>
+                <attr key="DetectPulseLength" type="int">10</attr>
+                <attr key="DetectPulsePolarity" type="bool">true</attr>
+                <attr key="DetectPulses" type="bool">false</attr>
+                <attr key="DetectRisingEdges" type="bool">false</attr>
+                <attr key="RunDetector" type="bool">false</attr>
+                <attr key="_priorityAttributes" type="string"/>
+            </node>
+            <node name="imu" path="/mainloop/dvxplorer/imu/">
+                <attr key="AccelDataRate" type="string">800 Hz</attr>
+                <attr key="AccelFilter" type="string">Normal</attr>
+                <attr key="AccelRange" type="string">±4G</attr>
+                <attr key="GyroDataRate" type="string">800 Hz</attr>
+                <attr key="GyroFilter" type="string">Normal</attr>
+                <attr key="GyroRange" type="string">±500°/s</attr>
+                <attr key="RunAccelerometer" type="bool">true</attr>
+                <attr key="RunGyroscope" type="bool">true</attr>
+                <attr key="RunTemperature" type="bool">true</attr>
+                <attr key="_priorityAttributes" type="string">RunAccelerometer,RunGyroscope</attr>
+            </node>
+            <node name="multiplexer" path="/mainloop/dvxplorer/multiplexer/">
+                <attr key="DropDVSOnTransferStall" type="bool">false</attr>
+                <attr key="DropExtInputOnTransferStall" type="bool">true</attr>
+                <attr key="TimestampReset" type="bool">false</attr>
+                <attr key="_priorityAttributes" type="string"/>
+            </node>
+            <node name="readout" path="/mainloop/dvxplorer/readout/">
+                <attr key="FixedReadTime" type="bool">false</attr>
+                <attr key="GlobalHold" type="bool">true</attr>
+                <attr key="GlobalReset" type="bool">false</attr>
+                <attr key="GlobalResetDuringReadout" type="bool">false</attr>
+                <attr key="_priorityAttributes" type="string"/>
+            </node>
+            <node name="subsample" path="/mainloop/dvxplorer/subsample/">
+                <attr key="DualBinning" type="bool">false</attr>
+                <attr key="Enable" type="bool">false</attr>
+                <attr key="EventsFlatten" type="bool">false</attr>
+                <attr key="EventsOffOnly" type="bool">false</attr>
+                <attr key="EventsOnOnly" type="bool">false</attr>
+                <attr key="Horizontal" type="string">none</attr>
+                <attr key="Vertical" type="string">none</attr>
+                <attr key="_priorityAttributes" type="string"/>
+            </node>
+            <node name="system" path="/mainloop/dvxplorer/system/">
+                <attr key="DataExchangeBufferSize" type="int">64</attr>
+                <attr key="PacketContainerInterval" type="int">10000</attr>
+                <attr key="PacketContainerMaxPacketSize" type="int">0</attr>
+                <attr key="_priorityAttributes" type="string"/>
+            </node>
+            <node name="usb" path="/mainloop/dvxplorer/usb/">
+                <attr key="BufferNumber" type="int">8</attr>
+                <attr key="BufferSize" type="int">8192</attr>
+                <attr key="EarlyPacketDelay" type="int">8</attr>
+                <attr key="_priorityAttributes" type="string"/>
+            </node>
+        </node>
+        <node name="noiseFilter" path="/mainloop/noiseFilter/">
+            <attr key="_guiSupport" type="string">{"boxX":300.0,"boxY":200.0}</attr>
+            <attr key="_priorityAttributes" type="string">backgroundActivityEnable</attr>
+            <attr key="backgroundActivityCheckPolarity" type="bool">false</attr>
+            <attr key="backgroundActivityEnable" type="bool">true</attr>
+            <attr key="backgroundActivitySupportMax" type="int">8</attr>
+            <attr key="backgroundActivitySupportMin" type="int">1</attr>
+            <attr key="backgroundActivityTime" type="int">2000</attr>
+            <attr key="backgroundActivityTwoLevels" type="bool">false</attr>
+            <attr key="hotPixelCount" type="int">10000</attr>
+            <attr key="hotPixelEnable" type="bool">false</attr>
+            <attr key="hotPixelLearn" type="bool">false</attr>
+            <attr key="hotPixelList" type="string"/>
+            <attr key="hotPixelTime" type="int">1000000</attr>
+            <attr key="logLevel" type="string">INFO</attr>
+            <attr key="moduleLibrary" type="string">dv_dvsnoisefilter</attr>
+            <attr key="refractoryPeriodEnable" type="bool">true</attr>
+            <attr key="refractoryPeriodTime" type="int">100</attr>
+            <attr key="running" type="bool">true</attr>
+            <node name="inputs" path="/mainloop/noiseFilter/inputs/">
+                <node name="events" path="/mainloop/noiseFilter/inputs/events/">
+                    <attr key="from" type="string">dvxplorer[events]</attr>
+                </node>
+            </node>
+        </node>
+        <node name="output_net_tcp_server" path="/mainloop/output_net_tcp_server/">
+            <attr key="_guiSupport" type="string">{"boxX":500.0,"boxY":400.0}</attr>
+            <attr key="_priorityAttributes" type="string">compression,ipAddress,portNumber</attr>
+            <attr key="compression" type="string">NONE</attr>
+            <attr key="ipAddress" type="string">127.0.0.1</attr>
+            <attr key="logLevel" type="string">INFO</attr>
+            <attr key="maxConcurrentConnections" type="int">10</attr>
+            <attr key="maxConnectionsBacklog" type="int">5</attr>
+            <attr key="maxDataBacklog" type="int">5</attr>
+            <attr key="moduleLibrary" type="string">dv_output_net_tcp_server</attr>
+            <attr key="portNumber" type="int">50998</attr>
+            <attr key="running" type="bool">true</attr>
+            <attr key="timeout" type="long">0</attr>
+            <node name="inputs" path="/mainloop/output_net_tcp_server/inputs/">
+                <node name="output0" path="/mainloop/output_net_tcp_server/inputs/output0/">
+                    <attr key="from" type="string">noiseFilter[events]</attr>
+                </node>
+            </node>
+        </node>
+    </node>
+</dv>
