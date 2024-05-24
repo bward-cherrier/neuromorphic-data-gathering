@@ -6,12 +6,17 @@
 
 # User editable items
 echo "Current time: `date`"
-echo "Please input your virtual environment name (or press Enter to use default name: Specktac):"
+echo "Please input your virtual environment name (or press Enter to use default name: 'specktac_env'):"
 read ENV_NAME
-ENV_NAME=${ENV_NAME:-'Specktac'}
+ENV_NAME=${ENV_NAME:-'specktac_env'}
 echo "Please input your Python interpreter version (or press Enter to use default version: 3.8):"
 read PYTHON_VERSION
 PYTHON_VERSION=${PYTHON_VERSION:-'3.8'}
+
+default_data_dir=$HOME/Data
+echo "Please input your data path (or press Enter to use the default path: $default_data_dir):"
+read DATA_PATH
+DATA_PATH=${DATA_PATH:-$default_data_dir}
 
 cd ../../
 current_dir=$(pwd)
@@ -21,17 +26,17 @@ SINABS_PATH="$current_dir/source_code/sinabs"
 echo -e "\n"
 printf "%-28s %-25s\n" "Virtual environment name:" 	$ENV_NAME
 printf "%-28s %-25s\n" "Python version:"		$PYTHON_VERSION
-printf "%-28s %-25s\n" "CRI folder path:"		$CRI_PATH
-printf "%-28s %-25s\n" "Sinabs folder path:"		$SINABS_PATH
+printf "%-28s %-25s\n" "Data storage path:"		$DATA_PATH
+
 
 echo "Shall we continue? [y/n]"
 read judge
 if [ $judge = 'y' ]
 then
-   echo -e "Continue processing\n"
+   echo -e "Configuring environment\n"
 elif [ $judge = 'n' ]
 then
-   echo "Stop the process"
+   echo "Process aborted"
    exit
 else
    echo "Wrong input!"
@@ -42,7 +47,7 @@ fi
 # 检查conda环境是否可用
 echo -e "\n"
 echo "##################################"
-echo "Baisc environment configuration"
+echo "Basic environment configuration"
 echo "##################################"
 
 if ! command -v conda &> /dev/null
@@ -112,7 +117,7 @@ pip install -e .
 # echo "#############################################"
 # pip install sinabs-dynapcnn
 
-echo -e "\nSpecktac environment is successfully configured!"
+echo -e "\n$ENV_NAME environment is successfully configured!"
 
 
 

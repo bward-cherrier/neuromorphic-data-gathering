@@ -87,7 +87,7 @@ class VideoWriterWidget(object):
         # Create another thread to show/save frames
         while self.is_recording == True:       
             try:
-                # self.show_frame()
+                self.show_frame()
                 self.save_frame()
             except AttributeError:
                 pass

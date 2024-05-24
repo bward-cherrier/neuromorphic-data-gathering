@@ -1,15 +1,15 @@
 #!/bin/bash
 
 ######################## Note! #############################
-# Author: XXC		Data: 2024/04/26 ###################
+# Author: XXC		Date: 2024/04/26 ###################
 ############################################################
 
 
 # User info input
 echo "Current time: `date`"
-echo "Please input your virtual environment name (or press Enter to use default name: neurotac):"
+echo "Please input your virtual environment name (or press Enter to use default name: 'neurotac_env'):"
 read ENV_NAME
-ENV_NAME=${ENV_NAME:-'neurotac'}
+ENV_NAME=${ENV_NAME:-'neurotac_env'}
 echo "Please input your Python interpreter version (or press Enter to use default version: 3.8):"
 read PYTHON_VERSION
 PYTHON_VERSION=${PYTHON_VERSION:-'3.8'}
@@ -27,18 +27,16 @@ DATA_PATH=${DATA_PATH:-$default_data_dir}
 echo -e "\n"
 printf "%-36s %-25s\n" "Virtual environment name:" 			$ENV_NAME
 printf "%-36s %-25s\n" "Python version:"				$PYTHON_VERSION
-printf "%-36s %-25s\n" "CRI folder path:"				$CRI_PATH
-printf "%-36s %-25s\n" "tactile-core-neuro folder path:"		$TCN_PATH
-printf "%-36s %-25s\n" "data storage path:"				$DATA_PATH
+printf "%-36s %-25s\n" "Data storage path:"				$DATA_PATH
 
 echo -e "\nShall we continue? (y/n)"
 read judge
 if [ $judge = 'y' ]
 then
-    echo -e "Continue processing.\n"
+    echo -e "Configuring environment.\n"
 elif [ $judeg = 'n' ]
 then
-    echo "Stop the process."
+    echo "Process aborted."
     exit
 else
     echo "Wrong input."
@@ -102,7 +100,7 @@ echo "#############################################"
 
 pip install dv-processing dv
 
-echo -e "\nNeurotac environment is successfully set up!"
+echo -e "\n$ENV_NAME environment is successfully set up!"
 
 
 
