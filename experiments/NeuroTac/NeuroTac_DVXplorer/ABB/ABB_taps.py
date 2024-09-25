@@ -113,7 +113,7 @@ def collect_data(collect_dir, video_dir, events_dir, tap_move, obj_poses, home_p
         sensor.save_events_on(events_on_file)
         # sensor.save_events_off(events_off_file)
         print("saved data")
-        pose_idx +=1
+
 
     # Move to home position
     print("Moving to home position ...")

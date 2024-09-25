@@ -278,12 +278,12 @@ class NeuroTac_DV:
     # Start logging data
     def start_logging(self):
         self.thread_run = True
-        print('Started recording')
+        print('Recording from neuroTac')
 
     # Stop logging data
     def stop_logging(self):
         self.thread_run = False
-        print('Stopped recording')
+        print('Stopped recording from neuroTac')
 
     # Log ON and OFF pixel events
     def get_events(self): 

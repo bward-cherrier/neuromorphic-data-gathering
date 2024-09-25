@@ -8,11 +8,6 @@ import cv2
 import threading
 from pathlib import Path
 
-from vsp.video_stream import CvVideoDisplay, CvVideoInputFile, CvVideoOutputFile
-from vsp.v4l2_camera import V4l2VideoCamera
-from vsp.processor import AsyncProcessor
-
-from core.sensor.tactile_capture_timestamp import CaptureTimestampOnline, CameraStreamProcessorMPTimestamp, CaptureTimestamp
 
 # os.environ["QT_QPA_PLATFORM_PLUGIN_PATH"] = os.fspath(
 #     Path(PyQt5.__file__).resolve().parent / "Qt5" / "plugins"

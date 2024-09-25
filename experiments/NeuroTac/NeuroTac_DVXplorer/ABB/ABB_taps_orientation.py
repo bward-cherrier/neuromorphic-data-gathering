@@ -54,7 +54,7 @@ def collect_data(collect_dir, video_dir, events_dir, tap_move, obj_poses, depths
 
     for trial_idx in range (n_trials):
 
-           # Move to origin of work frame
+      # Move to origin of work frame
       print("Moving to origin of work frame ...")
       robot.coord_frame = work_frame
       robot.move_linear((0, 0, 0, 0, 0, 0))
@@ -100,8 +100,7 @@ def collect_data(collect_dir, video_dir, events_dir, tap_move, obj_poses, depths
           sensor.save_events_on()
           sensor.save_events_off()
           print("saved data")
-        
-        pose_idx +=1
+
 
       # # Unwind sensor
       print("Unwinding")

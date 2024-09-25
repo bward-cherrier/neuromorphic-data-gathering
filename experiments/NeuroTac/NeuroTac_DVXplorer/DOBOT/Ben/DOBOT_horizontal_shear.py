@@ -40,9 +40,8 @@ def make_robot():
 def make_sensor_in():
     return NeuroTac(save_events_video=True, save_acc_video=False, display=False)    
 
-
 # Camera recording outside the tactip     
-def make_sensor_out(video_dir, device_path="/dev/video0", display=CvVideoDisplay(name='tactip_out'), frame_size=(640, 480), fps=60, cut=(0, 0)):
+def make_sensor_out(video_dir, device_path="/dev/video4", display=CvVideoDisplay(name='tactip_out'), frame_size=(640, 480), fps=60, cut=(0, 0)):
     return AsyncProcessor(CameraStreamProcessorMPTimestamp(
         camera=CaptureTimestamp(device_path=device_path, frame_size=frame_size, num_buffers=1, cut=cut, is_color=True),
         display=display,

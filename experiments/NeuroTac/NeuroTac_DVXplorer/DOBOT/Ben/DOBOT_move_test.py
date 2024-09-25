@@ -10,15 +10,13 @@ from cri.robot import SyncRobot, AsyncRobot
 from cri.controller import RTDEController 
 from cri.dobot.mg400_controller import MG400Controller
 
-from vsp.video_stream import CvVideoDisplay, CvVideoOutputFile
-from vsp.processor import AsyncProcessor, CameraStreamProcessorMP
-
-from core.sensor.tactile_capture_timestamp import CameraStreamProcessorMPTimestamp, CaptureTimestamp
 from core.sensor.tactile_sensor_neuro import NeuroTac
+
 
 class VideoWriterWidget(object):
     def __init__(self, src=0):
         # Create a VideoCapture object
+        self.src = src
         self.frame_name = str(src)
         self.capture = cv2.VideoCapture(src)
 
@@ -31,6 +29,7 @@ class VideoWriterWidget(object):
         # self.output_video = cv2.VideoWriter(self.video_file_name, self.codec, 30, (self.frame_width, self.frame_height))
 
         self.is_recording = False
+        self.timestamps = []
 
         # Start the thread to read frames from the video stream
         self.thread = Thread(target=self.read_frames, args=())
@@ -43,6 +42,9 @@ class VideoWriterWidget(object):
     def __exit__(self, type, value, traceback):
         pass
 
+    def reset_variables(self):
+        self.timestamps = []
+        
     def set_video_filename(self, video_file_name):
         
         self.video_file = video_file_name
@@ -55,12 +57,15 @@ class VideoWriterWidget(object):
  # Start logging data
     def start_logging(self):
         self.is_recording = True
-        print('Started recording')
+        print('Recording from camera')
+        self.start_timestamp = time.time()
+        # self.capture = cv2.VideoCapture(self.src)
+
 
     # Stop logging data
     def stop_logging(self):
         self.is_recording = False
-        print('Stopped recording')  
+        print('Stopped recording from camera')  
     
     def read_frames(self) -> None:       
         while True:
@@ -82,30 +87,138 @@ class VideoWriterWidget(object):
     def save_frame(self):
         # Save obtained frame into video output file
         self.output_video.write(self.frame)
+        self.timestamps.append(time.time())
     
     def get_frames(self):
         # Create another thread to show/save frames
         while self.is_recording == True:       
             try:
-                self.show_frame()
+                # self.show_frame()
                 self.save_frame()
             except AttributeError:
                 pass
         # self.capture.release()
-        # self.output_video.release()
-        # cv2.destroyAllWindows()
+        self.output_video.release()
+        cv2.destroyAllWindows()
         return
+    
+    def get_timestamps(self):
+        return [(ts - self.start_timestamp)*1000 for ts in self.timestamps]
+
+# class VideoWriterWidget(object):
+#     def __init__(self, src=0):
+#         # Create a VideoCapture object
+#         self.src = src
+#         self.frame_name = str(src)
+#         self.capture = cv2.VideoCapture(src)
+
+#         # Default resolutions of the frame are obtained (system dependent)
+#         self.frame_width = int(self.capture.get(3))
+#         self.frame_height = int(self.capture.get(4))
+        
+#         self.timestamps = []
+#         self.frame_count = 0
+
+#         # # Set up codec and output video settings
+#         # self.codec = cv2.VideoWriter_fourcc('M','J','P','G')
+#         # self.output_video = cv2.VideoWriter(self.video_file_name, self.codec, 30, (self.frame_width, self.frame_height))
+
+#         self.is_recording = False
+
+#         # Start the thread to read frames from the video stream
+#         self.thread = Thread(target=self.read_frames, args=())
+#         self.thread.daemon = True
+#         self.thread.start()
+        
+#     def __enter__(self):
+#         return self
+ 
+#     def __exit__(self, type, value, traceback):
+#         pass
+
+#     def reset_variables(self):
+#         self.timestamps = []
+#         self.frame_count = 0
+        
+#     def set_video_filename(self, video_file_name):
+        
+#         self.video_file = video_file_name
+#         self.video_file_name = video_file_name + '.avi'
+        
+#         # Set up codec and output video settings
+#         self.codec = cv2.VideoWriter_fourcc('M','J','P','G')
+#         self.output_video = cv2.VideoWriter(self.video_file_name, self.codec, 30, (self.frame_width, self.frame_height))
+        
+#  # Start logging data
+#     def start_logging(self):
+#         self.is_recording = True
+#         print('Recording from camera')
+#         self.start_timestamp = time.time()
+#         # self.capture = cv2.VideoCapture(self.src)
+
+#     # Stop logging data
+#     def stop_logging(self):
+#         self.is_recording = False
+#         print('Stopped recording from camera')  
+    
+#     def read_frames(self) -> None:       
+#         if self.capture.isOpened():
+#             while True:
+#                 try: 
+#                     (self.status, self.frame) = self.capture.read()
+#                     time.sleep(.01)                     
+#                 except:
+#                     pass
+#     # def show_frame(self):
+#     #     # Display frames in main program
+#     #     if self.status:
+#     #         cv2.imshow(self.frame_name, self.frame)
+            
+#     #     key = cv2.waitKey(1)
+#     #     if key == ord('q'):
+#     #         self.capture.release()
+#     #         self.output_video.release()
+#     #         cv2.destroyAllWindows()
+#     #         exit(1)
+
+#     def save_frame(self):
+#         # Save obtained frame into video output file
+#         self.output_video.write(self.frame)
+#         self.frame_count += 1
+    
+#     # def save_timestamps():
+#     #     with open(self.ts_filename, 'wb') as t:
+#     #         pickle.dump(self.timestamps, t)
+        
+        
+#     def get_frames(self):
+#         # Create another thread to show/save frames
+#         while self.is_recording == True:       
+#             try:
+#                 # self.show_frame()
+#                 self.save_frame()
+#             except AttributeError:
+#                 print("save frame error")
+#                 pass
+#             self.timestamps.append(time.time())
+#         self.capture.release()
+#         self.output_video.release()
+#         cv2.destroyAllWindows()
+#         return
+    
+#     def get_timestamps(self):
+#         return [(ts - self.start_timestamp)*1000 for ts in self.timestamps]
 
 def make_meta(robot_tcp = [0, 0, 119.5, 0, 0, 70],
               base_frame = [0, 0, 0, 0, 0, 0],
-              home_pose = [300, 0, -50, 0, 0, 0], # (300,0,119.5,0,0,70) on online mode
-              work_frame = [283.2, 15.9, -190.8, 0, 0, 0], # [283.2, 15.9, -200.8, 0, 0, 0]
+              home_pose = [280, 0, -80, 0, 0, 0], 
+              work_frame = [233.2, -9.9, -201.5, 0, 0, 0], # old [283.2, 15.9, -200.8, 0, 0, 0] -119.5 difference in z in windows software
               linear_speed = 20,
               angular_speed = 10,
-              slide_speeds = [1.0]  ,  # [0.3, 0.5, 1.0]  
-              slide_depths = [2,3,4,5],  # [2,3,4,5,6]
-              slide_directions = ['right','left','down','up','upright','upleft','downright','downleft','back'], # ['right','left','down','up','upright','upleft','downright','downleft']
-              n_runs = 1,
+              slide_speeds = [2.0]  ,  # [0.3, 0.5, 1.0]  
+              slide_depths = [2,3,4],  # [2,3,4,5,6]
+              slide_directions = ['right','left','down','up','upright','upleft','downright','downleft'], # ['right','left','down','up','upright','upleft','downright','downleft']
+              n_runs = 10,
               tip = 'IncUndExt_v1',
               sensor = 'NeuroTac_DVXplorer' # 'NeuroTac_DVXplorer', 'NeuroTac_eDVS', 'Neurotac_DAVIS240'
               ):
@@ -132,7 +245,7 @@ def make_sensor_in():
 #     ))
 
 def make_sensor_out():
-    source = '/dev/video0'
+    source = '/dev/video4'
     return VideoWriterWidget(source)
     
     
@@ -174,10 +287,13 @@ def collect(collect_dir, video_dir, events_dir, robot_tcp, base_frame, home_pose
                         tactip_out_video = os.path.join(video_dir, 'tactip_out_d'+ str(depth) + '_s' + str(speed) + '_dir_' + direction + '_r' + str(r))
                         events_video = os.path.join(video_dir,'event_stream_d' + str(depth) + '_s' + str(speed) + '_dir_' + direction + '_r' + str(r)+'.mp4')
                         acc_video = os.path.join(video_dir,'accumulator_d' + str(depth) + '_s' + str(speed) + '_dir_' + direction + '_r' + str(r)+'.mp4')        
-
+                        timestamps_file = os.path.join(events_dir,'d' + str(depth) + '_s' + str(speed) + '_dir_' + direction + '_r' + str(r)+'_events_stream')
+                        
                         sensor_in.reset_variables()
+                        sensor_out.reset_variables()
                         sensor_in.set_filenames(events_on_file = events_on_file, events_off_file = events_off_file,events_stream_file = events_stream_file, events_video_file = events_video, acc_video_file = acc_video)
                         sensor_out.set_video_filename(video_file_name = tactip_out_video)
+                        # sensor_out.set_video_filename(timestamps_filename = timestamps_file)
                         
                         # Set robot positions
                         retract = 3
@@ -217,7 +333,7 @@ def collect(collect_dir, video_dir, events_dir, robot_tcp, base_frame, home_pose
                         _ = robot.move_linear(ur5_positions[1])  # Contact object
 
                         # Start sensors
-                        # sensor_out.async_process(outfile=tactip_out_video, num_frames=5000)  # Start exterior cam rec
+                        # sen                self.timestamps.append(time.time())sor_out.async_process(outfile=tactip_out_video, num_frames=5000)  # Start exterior cam rec
                         # # sensor_out.async_process(outfile=None, num_frames=5000)
                         sensor_out.start_logging()
                         t_out = threading.Thread(target=sensor_out.get_frames, args = ())
@@ -239,6 +355,7 @@ def collect(collect_dir, video_dir, events_dir, robot_tcp, base_frame, home_pose
                         
                         sensor_out.stop_logging()
                         t_out.join()
+                        # sensor_out.save_timestamps()
                         # sensor_out.async_cancel()
 
                         # # Write videos and timestamps to file
@@ -247,6 +364,9 @@ def collect(collect_dir, video_dir, events_dir, robot_tcp, base_frame, home_pose
 
                         sensor_in.value_cleanup()
                         sensor_in.save_events_stream()
+                        
+                        ts_out = sensor_out.get_timestamps()
+                        ts_dict_out.update({'tactip_out_d'+ str(depth) + '_s' + str(speed) + '_dir_' + direction + '_r' + str(r): ts_out})
                         # sensor_in.save_events_on()
                         # sensor_in.save_events_off()
 
@@ -266,8 +386,8 @@ def collect(collect_dir, video_dir, events_dir, robot_tcp, base_frame, home_pose
         robot.move_linear(home_pose)  # Move home
 
         # Save timestamp data
-        # with open(ts_data_out, 'wb') as t:
-        #     pickle.dump(ts_dict_out, t)
+        with open(ts_data_out, 'wb') as t:
+            pickle.dump(ts_dict_out, t)
         # with open(ts_data_in, 'wb') as t:
         #     pickle.dump(ts_dict_in, t)
         
